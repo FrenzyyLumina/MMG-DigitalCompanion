@@ -1,6 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameView : MonoBehaviour
 {
@@ -16,27 +19,30 @@ public class GameView : MonoBehaviour
     // Basic Features
     public void SetTurnCount(int turnCount)
     {
-        this.txtTurnCount.GetComponent<UnityEngine.UI.Text>().text = "Turn: " + turnCount.ToString();
+        //this.txtTurnCount.GetComponent<UnityEngine.UI.Text>().text = "Turn: " + turnCount.ToString();
+        this.txtBinaryPrompt.GetComponent<TMP_Text>().text = "Turn: " + turnCount.ToString();
     }
     public void SetBinaryPrompt(string prompt)
     {
-        this.containerBinaryChoice.GetComponentInChildren<UnityEngine.UI.Text>().text = prompt;
+        //this.txtBinaryPrompt.GetComponentInChildren<UnityEngine.UI.Text>().text = prompt;
+        //this.txtBinaryPrompt.text = prompt;
+        this.txtBinaryPrompt.GetComponent<TMP_Text>().text = prompt;
     }
-    public void displayMainChoice()
+    public void DisplayMainChoice()
     {
         this.containerMainChoice.SetActive(true);
         this.containerMoveChoice.SetActive(false);
         this.containerTargetChoice.SetActive(false);
         this.containerBinaryChoice.SetActive(false);
     }
-    public void displayTargetChoice()
+    public void DisplayTargetChoice()
     {
         this.containerMainChoice.SetActive(false);
         this.containerMoveChoice.SetActive(false);
         this.containerTargetChoice.SetActive(true);
         this.containerBinaryChoice.SetActive(false);
     }
-    public void displayBinaryChoice()
+    public void DisplayBinaryChoice()
     {
         this.containerMainChoice.SetActive(false);
         this.containerMoveChoice.SetActive(false);
@@ -77,28 +83,28 @@ public class GameView : MonoBehaviour
     // Move Choices
     public void OnBackMovePressed()
     {
-        displayMainChoice();
+        DisplayMainChoice();
     }
 
     public void OnSoftPressed()
     {
         print("Soft Move Pressed");
         SetBinaryPrompt("Did you land on the same square with another player?");
-        displayBinaryChoice();
+        DisplayBinaryChoice();
     }
 
     public void OnLoudShortPressed()
     {
         print("Loud Short Move Pressed");
         SetBinaryPrompt("Did you land on the same square with another player?");
-        displayBinaryChoice();
+        DisplayBinaryChoice();
     }
 
     public void OnLoudLongPressed()
     {
         print("Loud Long Move Pressed");
         SetBinaryPrompt("Did you land on the same square with another player?");
-        displayBinaryChoice();
+        DisplayBinaryChoice();
     }
 
     // Target Choices
@@ -119,11 +125,11 @@ public class GameView : MonoBehaviour
     public void OnYes()
     {
         print("Yes");
-        displayMainChoice();
+        DisplayMainChoice();
     }
     public void OnNo()
     {
         print("No");
-        displayMainChoice();
+        DisplayMainChoice();
     }
 }

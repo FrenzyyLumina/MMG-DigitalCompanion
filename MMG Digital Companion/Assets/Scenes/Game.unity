@@ -4100,7 +4100,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 909860181}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1083791922}
+        m_TargetAssemblyTypeName: GameView, Assembly-CSharp
+        m_MethodName: OnBackViewPlayersPressed
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &909860181
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4834,7 +4846,7 @@ MonoBehaviour:
   containerMoveChoice: {fileID: 1129430484}
   containerTargetChoice: {fileID: 314531060}
   containerBinaryChoice: {fileID: 223104953}
-  txtBinaryPrompt: {fileID: 1684370800}
+  txtBinaryPrompt: {fileID: 608206034}
 --- !u!4 &1083791923
 Transform:
   m_ObjectHideFlags: 0
@@ -5803,7 +5815,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1203253629}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1083791922}
+        m_TargetAssemblyTypeName: GameView, Assembly-CSharp
+        m_MethodName: OnViewPlayersPressed
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1203253629
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6292,7 +6316,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1083791922}
         m_TargetAssemblyTypeName: GameView, Assembly-CSharp
-        m_MethodName: displayMainChoice
+        m_MethodName: DisplayMainChoice
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -8723,7 +8747,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1083791922}
         m_TargetAssemblyTypeName: GameView, Assembly-CSharp
-        m_MethodName: displayMainChoice
+        m_MethodName: DisplayMainChoice
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
