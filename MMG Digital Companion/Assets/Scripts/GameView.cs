@@ -7,100 +7,110 @@ using UnityEngine.UI;
 
 public class GameView : MonoBehaviour
 {
-    [SerializeField] GameObject txtTurnCount;
-    [SerializeField] GameObject SwingPanel;
+    [SerializeField] static GameObject txtTurnCount;
+    [SerializeField] static GameObject SwingPanel;
 
-    [SerializeField] GameObject containerMainChoice;
-    [SerializeField] GameObject containerMoveChoice;
-    [SerializeField] GameObject containerTargetChoice;
-    [SerializeField] GameObject containerBinaryChoice;
-    [SerializeField] GameObject txtBinaryPrompt;
+    [SerializeField] static GameObject containerMainChoice;
+    [SerializeField] static GameObject containerMoveChoice;
+    [SerializeField] static GameObject containerTargetChoice;
+    [SerializeField] static GameObject containerBinaryChoice;
+    [SerializeField] static GameObject txtBinaryPrompt;
 
     // Basic Features
-    public void SetTurnCount(int turnCount)
+    public static void SetTurnCount(int turnCount)
     {
-        //this.txtTurnCount.GetComponent<UnityEngine.UI.Text>().text = "Turn: " + turnCount.ToString();
-        this.txtBinaryPrompt.GetComponent<TMP_Text>().text = "Turn: " + turnCount.ToString();
+        //txtTurnCount.GetComponent<UnityEngine.UI.Text>().text = "Turn: " + turnCount.ToString();
+        txtBinaryPrompt.GetComponent<TMP_Text>().text = "Turn: " + turnCount.ToString();
     }
-    public void SetBinaryPrompt(string prompt)
+    public static void SetBinaryPrompt(string prompt)
     {
-        //this.txtBinaryPrompt.GetComponentInChildren<UnityEngine.UI.Text>().text = prompt;
-        //this.txtBinaryPrompt.text = prompt;
-        this.txtBinaryPrompt.GetComponent<TMP_Text>().text = prompt;
+        //txtBinaryPrompt.GetComponentInChildren<UnityEngine.UI.Text>().text = prompt;
+        //txtBinaryPrompt.text = prompt;
+        txtBinaryPrompt.GetComponent<TMP_Text>().text = prompt;
     }
-    public void DisplayMainChoice()
+    public static void DisplayMainChoice()
     {
-        this.containerMainChoice.SetActive(true);
-        this.containerMoveChoice.SetActive(false);
-        this.containerTargetChoice.SetActive(false);
-        this.containerBinaryChoice.SetActive(false);
+        containerMainChoice.SetActive(true);
+        containerMoveChoice.SetActive(false);
+        containerTargetChoice.SetActive(false);
+        containerBinaryChoice.SetActive(false);
     }
-    public void DisplayTargetChoice()
+    public static void DisplayTargetChoice()
     {
-        this.containerMainChoice.SetActive(false);
-        this.containerMoveChoice.SetActive(false);
-        this.containerTargetChoice.SetActive(true);
-        this.containerBinaryChoice.SetActive(false);
+        containerMainChoice.SetActive(false);
+        containerMoveChoice.SetActive(false);
+        containerTargetChoice.SetActive(true);
+        containerBinaryChoice.SetActive(false);
     }
-    public void DisplayBinaryChoice()
+    public static void DisplayBinaryChoice()
     {
-        this.containerMainChoice.SetActive(false);
-        this.containerMoveChoice.SetActive(false);
-        this.containerTargetChoice.SetActive(false);
-        this.containerBinaryChoice.SetActive(true);
+        containerMainChoice.SetActive(false);
+        containerMoveChoice.SetActive(false);
+        containerTargetChoice.SetActive(false);
+        containerBinaryChoice.SetActive(true);
     }
 
-    public void OnViewPlayersPressed()
+    public static void OnViewPlayersPressed()
     {
         SwingPanel.SetActive(true);
     }
-    public void OnBackViewPlayersPressed()
+    public static void OnBackViewPlayersPressed()
     {
         SwingPanel.SetActive(false);
     }
 
-    // Main Choices
-    public void OnMovePressed()
+    public static void AddTurnEndListener()
     {
-        this.containerMainChoice.SetActive(false);
-        this.containerMoveChoice.SetActive(true);
-        this.containerTargetChoice.SetActive(false);
-        this.containerBinaryChoice.SetActive(false);
+
     }
-    public void OnUseItemPressed()
+
+    public static void ClearAllTurnEndListeners()
+    {
+
+    }
+
+    // Main Choices
+    public static void OnMovePressed()
+    {
+        containerMainChoice.SetActive(false);
+        containerMoveChoice.SetActive(true);
+        containerTargetChoice.SetActive(false);
+        containerBinaryChoice.SetActive(false);
+    }
+    public static void OnUseItemPressed()
     {
         print("Item Used Pressed");
     }
-    public void OnCompleteObjectivePressed()
+    public static void OnCompleteObjectivePressed()
     {
         print("Complete Objective Pressed");
     }
-    public void OnSkipTurnPressed()
+    public static void OnSkipTurnPressed()
     {
         print("Skip Turn Pressed");
     }
 
     // Move Choices
-    public void OnBackMovePressed()
+    public static void OnBackMovePressed()
     {
         DisplayMainChoice();
     }
 
-    public void OnSoftPressed()
+    public static void OnSoftPressed()
     {
         print("Soft Move Pressed");
         SetBinaryPrompt("Did you land on the same square with another player?");
         DisplayBinaryChoice();
     }
 
-    public void OnLoudShortPressed()
+    public static void OnLoudShortPressed()
     {
         print("Loud Short Move Pressed");
         SetBinaryPrompt("Did you land on the same square with another player?");
         DisplayBinaryChoice();
     }
 
-    public void OnLoudLongPressed()
+    public static void OnLoudLongPressed()
     {
         print("Loud Long Move Pressed");
         SetBinaryPrompt("Did you land on the same square with another player?");
@@ -108,26 +118,26 @@ public class GameView : MonoBehaviour
     }
 
     // Target Choices
-    public void OnPlayerAPressed()
+    public static void OnPlayerAPressed()
     {
         print("Player A Targeted");
     }
-    public void OnPlayerBPressed()
+    public static void OnPlayerBPressed()
     {
         print("Player B Targeted");
     }
-    public void OnPlayerCPressed()
+    public static void OnPlayerCPressed()
     {
         print("Player C Targeted");
     }
 
     // Binary Choices
-    public void OnYes()
+    public static void OnYes()
     {
         print("Yes");
         DisplayMainChoice();
     }
-    public void OnNo()
+    public static void OnNo()
     {
         print("No");
         DisplayMainChoice();
