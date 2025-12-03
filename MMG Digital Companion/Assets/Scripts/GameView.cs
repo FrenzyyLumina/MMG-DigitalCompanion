@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -15,6 +16,9 @@ public class GameView : MonoBehaviour
     [SerializeField] static GameObject containerTargetChoice;
     [SerializeField] static GameObject containerBinaryChoice;
     [SerializeField] static GameObject txtBinaryPrompt;
+    [SerializeField] static Button butSkipTurn;
+
+    private static bool turnEnded = false;
 
     // Basic Features
     public static void SetTurnCount(int turnCount)
@@ -58,16 +62,20 @@ public class GameView : MonoBehaviour
     {
         SwingPanel.SetActive(false);
     }
-
-    public static void AddTurnEndListener()
+    public static void OnTurnEnd()
     {
-
+        turnEnded = true;
     }
 
-    public static void ClearAllTurnEndListeners()
+    IEnumerator WaitForTurnEnd()
     {
+        turnEnded = false;
 
+        //TODO: Add more button detections
+        butSkipTurn.onClick.AddListener(() =>  turnEnded = true);
+        yield return new WaitUntil(() => turnEnded);
     }
+    
 
     // Main Choices
     public static void OnMovePressed()
