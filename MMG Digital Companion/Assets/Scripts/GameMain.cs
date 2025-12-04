@@ -5,8 +5,14 @@ using UnityEngine;
 
 public class GameMain : MonoBehaviour
 {
-    //Helper Functions
-    private void handleCqcTarget(int targetIdx)
+    private Player[] Players;
+    private int TotalPlayers;
+    private int CurrentPlayerIdx = 0;
+    private int CurrentTurn = 1;
+    private Player winner;
+
+    //Rolls numDice amount of d6
+    private int[] rollD6Dices(int numDice)
     {
         GameView.OnPlayerTargetedEvent -= handleCqcTarget;
         print($"CQC Chosen: {targetIdx}");
@@ -120,12 +126,21 @@ public class GameMain : MonoBehaviour
 
     private IEnumerator GameLoop()
     {
+        // Get player data from GameManager
+        TotalPlayers = GameManager.Instance.TotalPlayers;
+        
         //Initialize
-        int nTotalPlrs = 2; //TODO: Change this
-        GameModel.setTotalPlayers(nTotalPlrs);
+        this.Players = new Player[this.TotalPlayers];
+        for (int i = 0; i < this.TotalPlayers; i++)
+        {
+            this.Players[i] = new Player();
+            // Set the role from the scanned QR codes
+            this.Players[i].setRole(GameManager.Instance.PlayerRoles[i]);
+            Debug.Log($"Player {i + 1} initialized with role: {GameManager.Instance.PlayerRoles[i]}");
+        }
 
         //Game Start
-        //TODO: Let Players scan roles
+        //Roles already scanned in GameStart scene
         
         //Start of actual game loop
         //TODO: handle player turn
