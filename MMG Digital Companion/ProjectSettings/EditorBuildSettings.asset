@@ -11,4 +11,13 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Main Menu.unity
     guid: b6921641cd2314a4794e661d270551d4
+  - enabled: 1
+    path: Assets/Scenes/GameStart.unity
+    guid: 703bece2adf8d764d918851d747d7cf2
+  - enabled: 1
+    path: Assets/Scenes/QRScanner.unity
+    guid: b825ec0b181524343b4544aedfb14891
+  - enabled: 1
+    path: Assets/Scenes/Game.unity
+    guid: fc060520bc0e8994ba13472d0275d42d
   m_configObjects: {}
