@@ -19,6 +19,7 @@ public static class GameEnums
     }
     public enum Role
     {
+        Unknown,
         Gent,
         Soldier,
         Thief,

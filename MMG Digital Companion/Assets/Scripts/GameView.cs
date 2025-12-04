@@ -76,10 +76,55 @@ public class GameView : MonoBehaviour
     }
     public static void SetBinaryPrompt(string prompt)
     {
-        //txtBinaryPrompt.GetComponentInChildren<UnityEngine.UI.Text>().text = prompt;
-        //txtBinaryPrompt.text = prompt;
         txtBinaryPrompt.GetComponent<TMP_Text>().text = prompt;
     }
+    public static void setTxtWinner(int plrNumber)
+    {
+        txtWinner.text = $"Player: {plrNumber}";
+    }
+    public static void setTxtRolls(int[] rolls, int total)
+    {
+        TMP_Text txtDiceRollResult = butRollResult.transform.Find("txtDiceRollResult")?.GetComponent<TMP_Text>();
+        TMP_Text txtTotalResult = butRollResult.transform.Find("txtTotalResult")?.GetComponent<TMP_Text>();
+
+        string rollsText = string.Join(", ", rolls);
+        txtDiceRollResult.text = $"Dice Rolls: {rollsText}";
+        txtTotalResult.text = $"Total: {total}";
+
+    }
+    public static void updateSwingPanel(Player[] players)
+    {
+        Transform[] plrPanels = new Transform[4];
+        plrPanels[0] = SwingPanel.transform.Find("Player_1");
+        plrPanels[1] = SwingPanel.transform.Find("Player_2");
+        plrPanels[2] = SwingPanel.transform.Find("Player_3");
+        plrPanels[3] = SwingPanel.transform.Find("Player_4");
+
+        for (int i = 0; i < plrPanels.Length; i++)
+        {
+            Transform curPanel = plrPanels[i];
+
+            if (i >= players.Length)
+            {
+                curPanel.gameObject.SetActive(false);
+                continue;
+            }
+
+            curPanel.gameObject.SetActive(true);
+            TMP_Text txtPlr     = curPanel.transform.Find("txtPlayer").GetComponent<TMP_Text>();
+            TMP_Text txtRole    = curPanel.transform.Find("txtRole").GetComponent<TMP_Text>();
+            TMP_Text txtHealth  = curPanel.transform.Find("txtHealth").GetComponent<TMP_Text>();
+            TMP_Text txtStatus  = curPanel.transform.Find("txtStatus").GetComponent<TMP_Text>();
+            
+            Player curPlr = players[i];
+            txtPlr.text = $"Player {i + 1}";
+            txtRole.text = $"{curPlr.getPlayerRole()}";
+            txtHealth.text = $"{curPlr.getHealthState()}";
+            txtStatus.text = $"{curPlr.getActionState()}";
+        }
+    }
+    
+    //Display methods
     public static void DisplayMainChoice()
     {
         containerMainChoice.SetActive(true);
@@ -123,6 +168,12 @@ public class GameView : MonoBehaviour
     {
         butWinnerResult.gameObject.SetActive(true);
     }
+    public static void showRollResult()
+    {
+        butRollResult.gameObject.SetActive(true);
+    }
+
+    //=====PRESS-EVENTS======
     public static void OnViewPlayersPressed()
     {
         SwingPanel.SetActive(true);
@@ -242,30 +293,10 @@ public class GameView : MonoBehaviour
     }
 
     // Roll Result
-    public static void setTxtRolls(int[] rolls, int total)
-    {
-        TMP_Text txtDiceRollResult = butRollResult.transform.Find("txtDiceRollResult")?.GetComponent<TMP_Text>();
-        TMP_Text txtTotalResult = butRollResult.transform.Find("txtTotalResult")?.GetComponent<TMP_Text>();
-
-        string rollsText = string.Join(", ", rolls);
-        txtDiceRollResult.text = $"Dice Rolls: {rollsText}";
-        txtTotalResult.text = $"Total: {total}";
-
-    }
-    public static void showRollResult()
-    {
-        butRollResult.gameObject.SetActive(true);
-    }
     public static void OnRollResultPressed()
     {
         print("Roll Result Pressed (View)");
         butRollResult.gameObject.SetActive(false);
         OnRollResultContinueEvent?.Invoke();
-    }
-
-    // Winner Result
-    public static void setTxtWinner(int plrIdx)
-    {
-        txtWinner.text = $"Player: {plrIdx + 1}";
     }
 }

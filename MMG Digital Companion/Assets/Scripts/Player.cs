@@ -10,15 +10,17 @@ public class Player
 
     private readonly Inventory inventory;
     private List<float> modifiers; //Multiplicative
+    private bool isRoleRevealed;
 
     public Player(/*GameEnums.Role role*/)
     {
         this.healthState = GameEnums.HealthState.Normal;
-        //this.role = role;
+        this.role = GameEnums.Role.Unknown;
         this.action = GameEnums.ActionState.Normal;
         
         this.inventory = new Inventory();
         this.modifiers = new List<float>();
+        this.isRoleRevealed = false;
     }
 
     public GameEnums.HealthState getHealthState()

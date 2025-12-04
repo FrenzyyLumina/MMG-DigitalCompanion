@@ -155,6 +155,7 @@ public class GameMain : MonoBehaviour
         //Start of actual game loop
         while(!GameModel.checkForWinner())
         {
+            GameView.updateSwingPanel(GameModel.getPlayers());
             GameView.SetTurnCount(GameModel.getCurrentTurn());
             GameView.SetCurrentPlayer(GameModel.getCurrentPlrIdx() + 1);
             yield return StartCoroutine(handleCurrentPlayer());
@@ -166,7 +167,7 @@ public class GameMain : MonoBehaviour
         int winnerIdx = GameModel.getIdxOfWinner();
 
         print($"Player who won: {winnerIdx + 1}");
-        GameView.setTxtWinner(winnerIdx);
+        GameView.setTxtWinner(winnerIdx + 1);
         GameView.DisplayWinner();
     }
 
