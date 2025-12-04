@@ -5,56 +5,14 @@ using UnityEngine;
 
 public class GameMain : MonoBehaviour
 {
-    private Player[] Players;
-    private int TotalPlayers = 2;
-    private int CurrentPlayerIdx = 0;
-    private int CurrentTurn = 1;
-    private Player winner;
-
-    //Rolls numDice amount of d6
-    private int[] rollD6Dices(int numDice)
+    private IEnumerator handleCurrentPlayer(int idx)
     {
-        int[] rolls = new int[numDice];
-
-        for (int i = 0; i < numDice; i++)
-        {
-            rolls[i] = Random.Range(1, 6);
-        }
-
-        return rolls;
-    }
-
-    private bool checkForWinner()
-    {
-        if (this.winner != null) return true;
-
-        //Check if there's 1 player remaining
-        Player AlivePlayer = null;
-        for (int i = 0; i < this.TotalPlayers; i++)
-        {
-            GameEnums.HealthState healthState = this.Players[i].getHealthState();
-            if (healthState == GameEnums.HealthState.Dead) continue;
-            if (AlivePlayer != null) return false; //there's no winner if >2 alive players
-            AlivePlayer = this.Players[i];
-        }
-
-        if (AlivePlayer != null)
-        {
-            this.winner = AlivePlayer;
-            return true;
-        }
-
-        return false;
-    }
-
-    private void handleCurrentPlayer(int idx)
-    {
-        Player curPlayer = Players[idx];
+        Player curPlayer = GameModel.getCurrentPlayerToAct();
         GameEnums.HealthState healthState = curPlayer.getHealthState();
         GameEnums.ActionState actionState = curPlayer.getActionState();
 
         //Auto skip if player is dead
-        if (healthState == GameEnums.HealthState.Dead) return;
+        if (healthState == GameEnums.HealthState.Dead) yield break;
 
         //TODO: Properly prompt stunned / turn skip
         if (actionState == GameEnums.ActionState.Stunned)
@@ -62,39 +20,34 @@ public class GameMain : MonoBehaviour
             //TODO: Disable all main choice actions
             GameView.DisplayMainChoice();
             //TODO: Wait for turn skip
+            yield return GameView.WaitForTurnEnd();
             curPlayer.setActionState(GameEnums.ActionState.Normal);
-            return;
+            yield break;
         }
 
         GameView.DisplayMainChoice();
         //TODO: Wait for turn end
+        yield return GameView.WaitForTurnEnd();
     }
 
     private void StartGame()
     {
         //Initialize
-        this.Players = new Player[this.TotalPlayers];
-        for (int i = 0; i < this.TotalPlayers; i++)
-        {
-            this.Players[i] = new Player();
-        }
+        int nTotalPlrs = 2; //TODO: Change this
+        GameModel.setTotalPlayers(nTotalPlrs);
+        GameModel.setPlayers(new Player[nTotalPlrs]);
 
         //Game Start
         //TODO: Let Players scan roles
         
         //Start of actual game loop
         //TODO: handle player turn
-        while(!checkForWinner())
+        while(!GameModel.checkForWinner())
         {
-            GameView.SetTurnCount(this.CurrentTurn);
+            GameView.SetTurnCount(GameModel.getCurrentTurn());
 
-            handleCurrentPlayer(this.CurrentPlayerIdx);
-            this.CurrentPlayerIdx++;
-            if (this.CurrentPlayerIdx == this.TotalPlayers)
-            {
-                this.CurrentPlayerIdx = 0;
-                this.CurrentTurn++;
-            }
+            handleCurrentPlayer();
+            GameModel.moveToNextPlayer();
         }
     }
 }
