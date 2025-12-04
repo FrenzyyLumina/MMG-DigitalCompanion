@@ -53,10 +53,10 @@ public class GameModel : MonoBehaviour
             roomId[i] = i;
         }
 
-        for (int i = 0;i < roomId.Length; i++)
+        for (int i = roomId.Length - 1; i > 0; i--)
         {
-            int j = Random.Range(0, roomId.Length);
-            int temp = roomId[j];
+            int j = Random.Range(0, i + 1);
+            int temp = roomId[i];
             roomId[i] = roomId[j];
             roomId[j] = temp;
         }
@@ -80,7 +80,7 @@ public class GameModel : MonoBehaviour
             }
         }
 
-        for (int i = 0; i < SPAWN_COORDS.Length; i++)
+        for (int i = 0; i < SPAWN_COORDS.GetLength(0); i++)
         {
             int x = SPAWN_COORDS[i, 0];
             int y = SPAWN_COORDS[i, 1];
@@ -251,5 +251,16 @@ public class GameModel : MonoBehaviour
                 break;
 
         }
+    }
+    public static int[] spawnTrapAtRandomPos()
+    {
+        int x = Random.Range(0, BOARD_SIZE);
+        int y = Random.Range(0, BOARD_SIZE);
+
+        //Reroll if not empty
+        if (Board[x, y].getType() != SquareType.Empty)
+            return spawnTrapAtRandomPos();
+
+        return new int[2] {x, y};
     }
 }

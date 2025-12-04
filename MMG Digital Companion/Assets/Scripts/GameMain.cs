@@ -6,6 +6,13 @@ using UnityEngine;
 public class GameMain : MonoBehaviour
 {
     //Helper Functions
+    private void handleRerollTrapPrompt()
+    {
+        int[] coord = GameModel.spawnTrapAtRandomPos();
+        GameView.setTrapCoord(coord[0], coord[1]);
+        GameView.showTrapPrompt();
+    }
+
     private void handleTargetPostMove(int targetIdx)
     {
         GameView.OnPlayerTargetedEvent -= handleTargetPostMove;
@@ -178,10 +185,15 @@ public class GameMain : MonoBehaviour
             GameView.SetTurnCount(GameModel.getCurrentTurn());
             GameView.SetCurrentPlayer(GameModel.getCurrentPlrIdx() + 1);
             yield return StartCoroutine(handleCurrentPlayer());
-            GameModel.moveToNextPlayer();
 
-            //TODO: Check if this is the last player of turn
-            //TODO: if it is, Give items to all players and spawn a trap
+            if (GameModel.getCurrentPlrIdx() == totalPlayers - 1)
+            {
+                //TODO: Check if this is the last player of turn
+                //TODO: if it is, Give items to all players and spawn a trap
+                handleRerollTrapPrompt();
+            }
+
+            GameModel.moveToNextPlayer();
         }
 
         print("We have a winner!!");
@@ -197,6 +209,7 @@ public class GameMain : MonoBehaviour
     {
         print("GameMain is running...");
         GameModel.Reset();
+        GameView.OnTrapSpawnRerollEvent += handleRerollTrapPrompt;
         StartCoroutine(GameLoop());
     }
 }
