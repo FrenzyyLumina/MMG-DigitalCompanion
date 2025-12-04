@@ -16,11 +16,6 @@ public class GameModel : MonoBehaviour
         return Players;
     }
 
-    public static void setPlayers(Player[] players)
-    {
-        Players = players;
-    }
-
     public static int getTotalPlayers()
     {
         return TotalPlayers;
@@ -29,6 +24,11 @@ public class GameModel : MonoBehaviour
     public static void setTotalPlayers(int total)
     {
         TotalPlayers = total;
+        Players = new Player[total];
+        for (int i = 0; i < total; i++)
+        {
+            Players[i] = new Player();
+        }
     }
     public static int getCurrentTurn()
     {
