@@ -8,17 +8,26 @@ public class MainMenuView : MonoBehaviour
 {
     [SerializeField] private GameObject SidePanel;
     [SerializeField] private GameObject containerOptions;
+    [SerializeField] private GameObject CoverImage;
 
     public void OnOptionsPressed()
     {
         this.SidePanel.SetActive(false);
         this.containerOptions.SetActive(true);
+        if (this.CoverImage != null)
+        {
+            this.CoverImage.SetActive(false);
+        }
     }
 
     public void OnBackOptionsPressed()
     {
         this.SidePanel.SetActive(true);
         this.containerOptions.SetActive(false);
+        if (this.CoverImage != null)
+        {
+            this.CoverImage.SetActive(true);
+        }
     }
 
     public void OnTwoPlayerPressed()
