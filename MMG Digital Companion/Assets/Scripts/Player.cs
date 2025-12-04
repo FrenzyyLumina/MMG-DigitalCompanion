@@ -9,12 +9,12 @@ public class Player : MonoBehaviour
     private GameEnums.ActionState   action;
 
     private readonly Inventory inventory;
-    private List<float> modifiers;
+    private List<float> modifiers; //Multiplicative
 
-    public Player(GameEnums.Role role)
+    public Player(/*GameEnums.Role role*/)
     {
         this.state = GameEnums.HealthState.Normal;
-        this.role = role;
+        //this.role = role;
         this.action = GameEnums.ActionState.Normal;
         
         this.inventory = new Inventory();
@@ -38,6 +38,11 @@ public class Player : MonoBehaviour
     public void setState(GameEnums.HealthState state)
     {
         this.state = state;
+    }
+
+    public void setRole(GameEnums.Role role)
+    {
+        this.role = role
     }
 
     public void setActionState(GameEnums.ActionState action)
