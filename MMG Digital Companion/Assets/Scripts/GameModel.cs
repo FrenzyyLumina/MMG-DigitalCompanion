@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
+using UnityEngine.UIElements;
 using static GameEnums;
 
 public class GameModel : MonoBehaviour
@@ -12,8 +13,10 @@ public class GameModel : MonoBehaviour
     private static int CurrentTurn;
     private static Player winner;
     private static GameEnums.Movement curMovement;
-    private static SquareType[,] Board;
+    //private static SquareType[,] Board;
+    private static Square[,] Board;
 
+    private const int BOARD_SIZE = 6;
     private const int NUM_ROOMS = 7;
     private const int NUM_OBJECTIVES = 3;
     //TODO: SNITCH VALUE
@@ -42,44 +45,45 @@ public class GameModel : MonoBehaviour
         winner = null;
 
         //-2 = Space occupied by mcguffin, -1 = room, 0 = free space, 1 = trap
-        Board = new SquareType[6, 6];
-        Board[0, 4] = SquareType.Armory;
-        Board[1, 0] = SquareType.Armory;
-        Board[1, 2] = SquareType.Armory;
-        Board[2, 4] = SquareType.Armory;
-        Board[3, 1] = SquareType.Armory;
-        Board[4, 5] = SquareType.Armory;
-        Board[5, 1] = SquareType.Armory;
+        Board = new Square[BOARD_SIZE, BOARD_SIZE];
+        
+        for (int i = 0; i < BOARD_SIZE; i++)
+        {
+            for (int j = 0; j < BOARD_SIZE; j++)
+            {
+                Board[i, j] = new Square(i, j, SquareType.Empty);
+            }
+        }
 
-        Board[2, 2] = SquareType.McGuffin;
-        Board[2, 3] = SquareType.McGuffin;
-        Board[3, 2] = SquareType.McGuffin;
-        Board[3, 3] = SquareType.McGuffin;
+        //TODO: Remake with new coordinate system
+        /*
+        Board[0, 4].setType(SquareType.Armory);
+        Board[1, 0].setType(SquareType.Armory);
+        Board[1, 2].setType(SquareType.Armory);
+        Board[2, 4].setType(SquareType.Armory);
+        Board[3, 1].setType(SquareType.Armory);
+        Board[4, 5].setType(SquareType.Armory);
+        Board[5, 1].setType(SquareType.Armory);
+        */
+
+
+        Board[2, 2].setType(SquareType.McGuffin);
+        Board[2, 3].setType(SquareType.McGuffin);
+        Board[3, 2].setType(SquareType.McGuffin);
+        Board[3, 3].setType(SquareType.McGuffin);
 
         int[] roomIds = getRandomRoomAssignments();
         for (int i = 0; i < NUM_OBJECTIVES; i++)
         {
             switch (roomIds[i])
             {
-                case 0: Board[0, 4] = GameEnums.SquareType.Objective; break;
-                case 1: Board[1, 0] = GameEnums.SquareType.Objective; break;
-                case 2: Board[1, 2] = GameEnums.SquareType.Objective; break;
-                case 3: Board[2, 4] = GameEnums.SquareType.Objective; break;
-                case 4: Board[3, 1] = GameEnums.SquareType.Objective; break;
-                case 5: Board[4, 5] = GameEnums.SquareType.Objective; break;
-                case 6: Board[5, 1] = GameEnums.SquareType.Objective; break;
+
             }
         }
 
         switch (roomIds[NUM_OBJECTIVES])
         {
-            case 0: Board[0, 4] = GameEnums.SquareType.Snitching; break;
-            case 1: Board[1, 0] = GameEnums.SquareType.Snitching; break;
-            case 2: Board[1, 2] = GameEnums.SquareType.Snitching; break;
-            case 3: Board[2, 4] = GameEnums.SquareType.Snitching; break;
-            case 4: Board[3, 1] = GameEnums.SquareType.Snitching; break;
-            case 5: Board[4, 5] = GameEnums.SquareType.Snitching; break;
-            case 6: Board[5, 1] = GameEnums.SquareType.Snitching; break;
+    
         }
     }
 
