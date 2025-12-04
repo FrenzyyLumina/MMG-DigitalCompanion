@@ -56,7 +56,7 @@ public class GameModel : MonoBehaviour
 
         for (int i = 0; i < numDice; i++)
         {
-            rolls[i] = Random.Range(1, 6);
+            rolls[i] = Random.Range(1, 7); //Note: Upperbound is exclusive
         }
 
         return rolls;
