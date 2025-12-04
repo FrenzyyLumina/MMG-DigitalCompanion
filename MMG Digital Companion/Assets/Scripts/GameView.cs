@@ -8,23 +8,23 @@ using UnityEngine.UI;
 
 public class GameView : MonoBehaviour
 {
-    [SerializeField] GameObject _txtTurnCount;
     [SerializeField] GameObject _SwingPanel;
     [SerializeField] GameObject _containerMainChoice;
     [SerializeField] GameObject _containerMoveChoice;
     [SerializeField] GameObject _containerTargetChoice;
     [SerializeField] GameObject _containerBinaryChoice;
-    [SerializeField] GameObject _txtBinaryPrompt;
+    [SerializeField] TMP_Text _txtTurnCount;
+    [SerializeField] TMP_Text _txtBinaryPrompt;
     [SerializeField] Button _butSkipTurn;
     [SerializeField] Button _butRollResult;
 
-    private static GameObject txtTurnCount;
     private static GameObject SwingPanel;
     private static GameObject containerMainChoice;
     private static GameObject containerMoveChoice;
     private static GameObject containerTargetChoice;
     private static GameObject containerBinaryChoice;
-    private static GameObject txtBinaryPrompt;
+    private static TMP_Text txtTurnCount;
+    private static TMP_Text txtBinaryPrompt;
     private static Button butSkipTurn;
     private static Button butRollResult;
 
@@ -59,7 +59,7 @@ public class GameView : MonoBehaviour
     public static void SetTurnCount(int turnCount)
     {
         //txtTurnCount.GetComponent<UnityEngine.UI.Text>().text = "Turn: " + turnCount.ToString();
-        txtBinaryPrompt.GetComponent<TMP_Text>().text = "Turn: " + turnCount.ToString();
+        txtTurnCount.GetComponent<TMP_Text>().text = "Turn: " + turnCount.ToString();
     }
     public static void SetBinaryPrompt(string prompt)
     {
