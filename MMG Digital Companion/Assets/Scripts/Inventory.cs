@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEditor.Progress;
+// using static UnityEditor.Progress; -- had to comment due to compiler error with this being unused.
 
 public class Inventory
 {
