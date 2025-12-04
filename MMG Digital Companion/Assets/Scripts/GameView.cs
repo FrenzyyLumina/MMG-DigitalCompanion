@@ -310,6 +310,7 @@ public class GameView : MonoBehaviour
     {
         print("Complete Objective Pressed");
         OnCompleteObjectivePressedEvent?.Invoke();
+        OnTurnEnd();
     }
     public static void OnSkipTurnPressed()
     {
