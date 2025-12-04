@@ -6,30 +6,44 @@ using UnityEngine;
 public class GameMain : MonoBehaviour
 {
     //Helper Functions
-    private void handleCqcTarget(int targetIdx)
+    private void handleTargetPostMove(int targetIdx)
     {
-        GameView.OnPlayerTargetedEvent -= handleCqcTarget;
+        GameView.OnPlayerTargetedEvent -= handleTargetPostMove;
         print($"CQC Chosen: {targetIdx}");
 
-        Player targetPlr = GameModel.getPlayerByIdx(targetIdx);
-        GameEnums.HealthState curState = targetPlr.getHealthState();
-        
-        switch (curState)
+        //Auto damage if soft
+        if (GameModel.getMovement() == GameEnums.Movement.Soft)
         {
-            case GameEnums.HealthState.Normal:
-                targetPlr.setState(GameEnums.HealthState.Wounded);
-                break;
-
-            case GameEnums.HealthState.Wounded:
-                targetPlr.setState(GameEnums.HealthState.Dead);
-                break;
-            default:
-                print($"Invalid Case: targetted a player with state: {curState}");
-                break;
-
+            GameModel.damagePlayer(targetIdx);
+            GameView.OnTurnEnd();
+            return;
         }
 
-        GameView.OnTurnEnd();
+        //Perform cqc roll
+        //TODO: Modify to handle extra rolls
+        int[] attackerRolls = GameModel.rollD6Dices(1);
+        int[] attackeeRolls = GameModel.rollD6Dices(1);
+        int attackerTotal = GameModel.totalFromDiceRolls(attackerRolls);
+        int attackeeTotal = GameModel.totalFromDiceRolls(attackeeRolls);
+
+        void handle()
+        {
+            GameView.OnCqcResultContinueEvent -= handle;
+
+            if (attackerTotal > attackeeTotal)
+                GameModel.damagePlayer(targetIdx);
+            else if (attackerTotal < attackeeTotal)
+                GameModel.damagePlayer(GameModel.getCurrentPlrIdx());
+
+            GameView.OnTurnEnd();
+        }
+
+        GameView.setCqcRolls(
+            GameModel.getCurrentPlrIdx(), attackerRolls, attackerTotal,
+            targetIdx, attackeeRolls, attackeeTotal
+        );
+        GameView.OnCqcResultContinueEvent += handle;
+        GameView.showCqcRollResult();
     }
     private void handlePostMoveEvent(bool yes)
     {
@@ -38,7 +52,7 @@ public class GameMain : MonoBehaviour
 
         if (!yes) GameView.OnTurnEnd();
 
-        GameView.OnPlayerTargetedEvent += handleCqcTarget;
+        GameView.OnPlayerTargetedEvent += handleTargetPostMove;
         GameView.DisplayTargetChoiceWithoutOne(
             GameModel.getTotalPlayers(),
             GameModel.getCurrentPlrIdx()
@@ -103,18 +117,21 @@ public class GameMain : MonoBehaviour
         {
             print("Handle Soft Triggered");
             int BASE_COUNT = 1;
+            GameModel.setMovement(GameEnums.Movement.Soft);
             handleGeneralMove(BASE_COUNT, false);
         }
         void handleLoudShort()
         {
             print("Handle Loud Short Triggered");
             int BASE_COUNT = 1;
+            GameModel.setMovement(GameEnums.Movement.Loud);
             handleGeneralMove(BASE_COUNT, true);
         }
         void handleLoudLong()
         {
             print("Handle Loud Long Triggered");
             int BASE_COUNT = 2;
+            GameModel.setMovement(GameEnums.Movement.Loud);
             handleGeneralMove(BASE_COUNT, false);
         }
 
