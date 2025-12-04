@@ -16,6 +16,8 @@ public class GameModel : MonoBehaviour
     private static GameEnums.Movement curMovement;
     //private static SquareType[,] Board;
     private static Square[,] Board;
+    private static int numObjectivesDone;
+    private static int SnitchValue;
 
     private const int BOARD_SIZE = 6;
     private const int NUM_ROOMS = 7;
@@ -68,6 +70,8 @@ public class GameModel : MonoBehaviour
         CurrentPlayerIdx = 0;
         CurrentTurn = 1;
         winner = null;
+        numObjectivesDone = 0;
+        SnitchValue = Random.Range(14, 19);
 
         //-2 = Space occupied by mcguffin, -1 = room, 0 = free space, 1 = trap
         Board = new Square[BOARD_SIZE, BOARD_SIZE];
@@ -262,5 +266,25 @@ public class GameModel : MonoBehaviour
             return spawnTrapAtRandomPos();
 
         return new int[2] {x, y};
+    }
+    public static void attemptSnitch(int plrIdx)
+    {
+        int NUM_DICE = 3;
+        int[] rolls = rollD6Dices(NUM_DICE);
+        int total = totalFromDiceRolls(rolls);
+
+        if (total >= SnitchValue)
+        {
+            winner = getPlayerByIdx(plrIdx);
+        }
+        else
+        {
+            damagePlayer(plrIdx);
+            Inventory curInv = getPlayerByIdx(plrIdx).getInventory();
+            for (int i = 0; i < NUM_DICE; i++)
+            {
+                curInv.removeItemByName("Dice");
+            }
+        }
     }
 }
