@@ -276,6 +276,7 @@ public class GameView : MonoBehaviour
     {
         print("Skip Turn Pressed");
         OnSkipTurnPressedEvent?.Invoke();
+        OnTurnEnd();
     }
 
     // Move Choices
