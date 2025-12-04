@@ -5,14 +5,8 @@ using UnityEngine;
 
 public class GameMain : MonoBehaviour
 {
-    private Player[] Players;
-    private int TotalPlayers;
-    private int CurrentPlayerIdx = 0;
-    private int CurrentTurn = 1;
-    private Player winner;
-
-    //Rolls numDice amount of d6
-    private int[] rollD6Dices(int numDice)
+    //Helper Functions
+    private void handleCqcTarget(int targetIdx)
     {
         GameView.OnPlayerTargetedEvent -= handleCqcTarget;
         print($"CQC Chosen: {targetIdx}");
@@ -60,7 +54,31 @@ public class GameMain : MonoBehaviour
         GameView.OnBinaryChoiceEvent += handlePostMoveEvent;
         GameView.DisplayBinaryChoice();
     }
+    private void handleGeneralMove(int baseCount, bool isLoudShort)
+    {
+        int extraDiceUsed = 0; //TODO: Get the value from somewhere
+        int dicesToUsed = baseCount + extraDiceUsed;
 
+        Player curPlayer = GameModel.getCurrentPlayerToAct();
+        Inventory inv = curPlayer.getInventory();
+        for (int i = 0; i < extraDiceUsed; i++)
+        {
+            inv.removeItemByName("Dice");
+        }
+
+        if (isLoudShort)
+        {
+            Item newDice = new Item("Dice", GameEnums.ItemUseType.TurnUsable);
+            inv.addItem(newDice);
+        }
+
+        int[] baseRoles = GameModel.rollD6Dices(dicesToUsed);
+        int rollTotal = GameModel.totalFromDiceRolls(baseRoles);
+        GameView.setTxtRolls(baseRoles, rollTotal);
+
+        GameView.OnRollResultContinueEvent += handleMoveRollResult;
+        GameView.showRollResult();
+    }
     //End of Helper Methods
     private IEnumerator handleCurrentPlayer()
     {
@@ -80,35 +98,24 @@ public class GameMain : MonoBehaviour
             curPlayer.setActionState(GameEnums.ActionState.Normal);
             yield break;
         }
-
-        //TODO: addListeners
-        //Listener for Move
+        
         void handleSoft()
         {
             print("Handle Soft Triggered");
             int BASE_COUNT = 1;
-            int extraDiceUsed = 0; //TODO: Get the value from somewhere
-            int dicesToUsed = BASE_COUNT + extraDiceUsed;
-
-            for(int i = 0; i < extraDiceUsed; i++)
-            {
-                curPlayer.getInventory().removeItemByName("Dice");
-            }
-
-            int[] baseRoles = GameModel.rollD6Dices(dicesToUsed);
-            int rollTotal = GameModel.totalFromDiceRolls(baseRoles);
-            GameView.setTxtRolls(baseRoles, rollTotal);
-            
-            GameView.OnRollResultContinueEvent += handleMoveRollResult;
-            GameView.showRollResult();
+            handleGeneralMove(BASE_COUNT, false);
         }
         void handleLoudShort()
         {
-            //TODO: Copy paste from above
+            print("Handle Loud Short Triggered");
+            int BASE_COUNT = 1;
+            handleGeneralMove(BASE_COUNT, true);
         }
         void handleLoudLong()
         {
-            //TODO: Copy paste from above
+            print("Handle Loud Long Triggered");
+            int BASE_COUNT = 2;
+            handleGeneralMove(BASE_COUNT, false);
         }
 
         GameView.OnSoftPressedEvent         += handleSoft;
@@ -127,23 +134,25 @@ public class GameMain : MonoBehaviour
     private IEnumerator GameLoop()
     {
         // Get player data from GameManager
-        TotalPlayers = GameManager.Instance.TotalPlayers;
-        
+        //int totalPlayers = GameManager.Instance.TotalPlayers;
+        int totalPlayers = 2;
+        GameModel.setTotalPlayers(totalPlayers);
+
         //Initialize
-        this.Players = new Player[this.TotalPlayers];
-        for (int i = 0; i < this.TotalPlayers; i++)
+        /*
+        Player[] players = GameModel.getPlayers();
+        for (int i = 0; i < totalPlayers; i++)
         {
-            this.Players[i] = new Player();
             // Set the role from the scanned QR codes
-            this.Players[i].setRole(GameManager.Instance.PlayerRoles[i]);
+            players[i].setRole(GameManager.Instance.PlayerRoles[i]);
             Debug.Log($"Player {i + 1} initialized with role: {GameManager.Instance.PlayerRoles[i]}");
         }
+        */
 
         //Game Start
         //Roles already scanned in GameStart scene
         
         //Start of actual game loop
-        //TODO: handle player turn
         while(!GameModel.checkForWinner())
         {
             GameView.SetTurnCount(GameModel.getCurrentTurn());
@@ -153,7 +162,12 @@ public class GameMain : MonoBehaviour
         }
 
         print("We have a winner!!");
-        print($"Player who won: {GameModel.getCurrentPlrIdx() + 1}");
+        //Player winner = GameModel.getWinner();
+        int winnerIdx = GameModel.getIdxOfWinner();
+
+        print($"Player who won: {winnerIdx + 1}");
+        GameView.setTxtWinner(winnerIdx);
+        GameView.DisplayWinner();
     }
 
     private void Start()
