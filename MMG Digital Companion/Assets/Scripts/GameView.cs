@@ -80,6 +80,22 @@ public class GameView : MonoBehaviour
         //txtBinaryPrompt.text = prompt;
         txtBinaryPrompt.GetComponent<TMP_Text>().text = prompt;
     }
+    public static void setTxtWinner(int plrIdx)
+    {
+        txtWinner.text = $"Player: {plrIdx + 1}";
+    }
+    public static void setTxtRolls(int[] rolls, int total)
+    {
+        TMP_Text txtDiceRollResult = butRollResult.transform.Find("txtDiceRollResult")?.GetComponent<TMP_Text>();
+        TMP_Text txtTotalResult = butRollResult.transform.Find("txtTotalResult")?.GetComponent<TMP_Text>();
+
+        string rollsText = string.Join(", ", rolls);
+        txtDiceRollResult.text = $"Dice Rolls: {rollsText}";
+        txtTotalResult.text = $"Total: {total}";
+
+    }
+    
+    //Display methods
     public static void DisplayMainChoice()
     {
         containerMainChoice.SetActive(true);
@@ -123,6 +139,12 @@ public class GameView : MonoBehaviour
     {
         butWinnerResult.gameObject.SetActive(true);
     }
+    public static void showRollResult()
+    {
+        butRollResult.gameObject.SetActive(true);
+    }
+
+    //=====PRESS-EVENTS======
     public static void OnViewPlayersPressed()
     {
         SwingPanel.SetActive(true);
@@ -242,30 +264,10 @@ public class GameView : MonoBehaviour
     }
 
     // Roll Result
-    public static void setTxtRolls(int[] rolls, int total)
-    {
-        TMP_Text txtDiceRollResult = butRollResult.transform.Find("txtDiceRollResult")?.GetComponent<TMP_Text>();
-        TMP_Text txtTotalResult = butRollResult.transform.Find("txtTotalResult")?.GetComponent<TMP_Text>();
-
-        string rollsText = string.Join(", ", rolls);
-        txtDiceRollResult.text = $"Dice Rolls: {rollsText}";
-        txtTotalResult.text = $"Total: {total}";
-
-    }
-    public static void showRollResult()
-    {
-        butRollResult.gameObject.SetActive(true);
-    }
     public static void OnRollResultPressed()
     {
         print("Roll Result Pressed (View)");
         butRollResult.gameObject.SetActive(false);
         OnRollResultContinueEvent?.Invoke();
-    }
-
-    // Winner Result
-    public static void setTxtWinner(int plrIdx)
-    {
-        txtWinner.text = $"Player: {plrIdx + 1}";
     }
 }
