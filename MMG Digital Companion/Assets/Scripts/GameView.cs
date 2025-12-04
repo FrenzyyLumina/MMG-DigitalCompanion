@@ -72,7 +72,7 @@ public class GameView : MonoBehaviour
     public static void SetTurnCount(int turnCount)
     {
         //txtTurnCount.GetComponent<UnityEngine.UI.Text>().text = "Turn: " + turnCount.ToString();
-        txtTurnCount.GetComponent<TMP_Text>().text = "Turn: " + turnCount.ToString();
+        txtTurnCount.GetComponent<TMP_Text>().text = "Round: " + turnCount.ToString();
     }
     public static void SetCurrentPlayer(int plrNumber)
     {
