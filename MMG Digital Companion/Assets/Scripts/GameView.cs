@@ -8,6 +8,7 @@ using UnityEngine.UI;
 
 public class GameView : MonoBehaviour
 {
+    [SerializeField] GameObject _Background;
     [SerializeField] GameObject _SwingPanel;
     [SerializeField] GameObject _containerMainChoice;
     [SerializeField] GameObject _containerMoveChoice;
@@ -22,6 +23,7 @@ public class GameView : MonoBehaviour
     [SerializeField] Button _butWinnerResult;
     [SerializeField] Button _butCqcResult;
 
+    private static GameObject Background;
     private static GameObject SwingPanel;
     private static GameObject containerMainChoice;
     private static GameObject containerMoveChoice;
@@ -53,6 +55,7 @@ public class GameView : MonoBehaviour
     private void Awake()
     {
         // Copy non-static references to static fields
+        Background              = _Background;
         SwingPanel              = _SwingPanel;
         containerMainChoice     = _containerMainChoice;
         containerMoveChoice     = _containerMoveChoice;
@@ -74,9 +77,24 @@ public class GameView : MonoBehaviour
         //txtTurnCount.GetComponent<UnityEngine.UI.Text>().text = "Turn: " + turnCount.ToString();
         txtTurnCount.GetComponent<TMP_Text>().text = "Round: " + turnCount.ToString();
     }
+    private static void SetBackgroundColorFromPlrNum(int plrNum)
+    {
+        Color newColor = new Color();
+        switch (plrNum)
+        {
+            case 1: newColor = Color.red; break;
+            case 2: newColor = Color.blue; break;
+            case 3: newColor = Color.green; break;
+            case 4: newColor = Color.yellow; break;
+        }
+
+
+        Background.GetComponent<Image>().color = newColor;
+    }
     public static void SetCurrentPlayer(int plrNumber)
     {
         txtCurrentPlayer.text = $"Player {plrNumber}'s Turn";
+        SetBackgroundColorFromPlrNum (plrNumber);
     }
     public static void SetBinaryPrompt(string prompt)
     {
