@@ -113,6 +113,8 @@ public class GameMain : MonoBehaviour
             yield break;
         }
         
+        //TODO: Add listener for complete objective
+
         void handleSoft()
         {
             print("Handle Soft Triggered");
@@ -177,6 +179,9 @@ public class GameMain : MonoBehaviour
             GameView.SetCurrentPlayer(GameModel.getCurrentPlrIdx() + 1);
             yield return StartCoroutine(handleCurrentPlayer());
             GameModel.moveToNextPlayer();
+
+            //TODO: Check if this is the last player of turn
+            //TODO: if it is, Give items to all players and spawn a trap
         }
 
         print("We have a winner!!");
@@ -191,6 +196,7 @@ public class GameMain : MonoBehaviour
     private void Start()
     {
         print("GameMain is running...");
+        GameModel.Reset();
         StartCoroutine(GameLoop());
     }
 }
