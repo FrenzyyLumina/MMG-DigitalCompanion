@@ -54,6 +54,7 @@ public class GameView : MonoBehaviour
     public static event Action OnRollResultContinueEvent;
     public static event Action OnCqcResultContinueEvent;
     public static event Action OnTrapSpawnRerollEvent;
+    public static event Action OnSnitchEvent;
 
     private void Awake()
     {
@@ -197,6 +198,14 @@ public class GameView : MonoBehaviour
     {
         panelTrapPrompt.transform.Find("txtCoord").GetComponent<TMP_Text>().text = $"{(char)('a' + x)}{y + 1}";
     }
+
+    public static void setMainChoiceButtonsInteractable(bool state)
+    {
+        containerMainChoice.transform.Find("butMove").GetComponent<Button>().interactable = state;
+        containerMainChoice.transform.Find("butItem").GetComponent<Button>().interactable = state;
+        containerMainChoice.transform.Find("butObjective").GetComponent<Button>().interactable = state;
+        containerMainChoice.transform.Find("butSnitch").GetComponent<Button>().interactable = state;
+    }
     //Display methods
     public static void DisplayMainChoice()
     {
@@ -301,11 +310,17 @@ public class GameView : MonoBehaviour
     {
         print("Complete Objective Pressed");
         OnCompleteObjectivePressedEvent?.Invoke();
+        OnTurnEnd();
     }
     public static void OnSkipTurnPressed()
     {
         print("Skip Turn Pressed");
         OnSkipTurnPressedEvent?.Invoke();
+        OnTurnEnd();
+    }
+    public static void OnSnitch()
+    {
+        OnSnitchEvent?.Invoke();
         OnTurnEnd();
     }
 

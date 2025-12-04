@@ -100,6 +100,9 @@ public class GameMain : MonoBehaviour
         GameView.OnRollResultContinueEvent += handleMoveRollResult;
         GameView.showRollResult();
     }
+    private void handleOnCompleteObjective() => GameModel.getCurrentPlayerToAct().setActionState(GameEnums.ActionState.CompletingObjective);
+    private void handleOnSnitch() => GameModel.attemptSnitch(GameModel.getCurrentPlrIdx());
+    
     //End of Helper Methods
     private IEnumerator handleCurrentPlayer()
     {
@@ -111,9 +114,10 @@ public class GameMain : MonoBehaviour
         if (healthState == GameEnums.HealthState.Dead) yield break;
 
         //TODO: Properly prompt stunned / turn skip
-        if (actionState == GameEnums.ActionState.Stunned)
+        if (actionState == GameEnums.ActionState.Stunned || actionState == GameEnums.ActionState.CompletingObjective)
         {
             //TODO: Disable all main choice actions
+            GameView.setMainChoiceButtonsInteractable(false);
             GameView.DisplayMainChoice();
             yield return GameView.WaitForTurnEnd();
             curPlayer.setActionState(GameEnums.ActionState.Normal);
@@ -148,7 +152,7 @@ public class GameMain : MonoBehaviour
         GameView.OnLoudShortPressedEvent    += handleLoudShort;
         GameView.OnLoudLongPressedEvent     += handleLoudLong;
 
-        
+        GameView.setMainChoiceButtonsInteractable(true);
         GameView.DisplayMainChoice();
         yield return GameView.WaitForTurnEnd();
         
@@ -161,7 +165,7 @@ public class GameMain : MonoBehaviour
     {
         // Get player data from GameManager
         //int totalPlayers = GameManager.Instance.TotalPlayers;
-        int totalPlayers = 2;
+        int totalPlayers = 3;
         GameModel.setTotalPlayers(totalPlayers);
 
         //Initialize
@@ -178,8 +182,12 @@ public class GameMain : MonoBehaviour
         //Game Start
         //Roles already scanned in GameStart scene
         
+        GameView.OnTrapSpawnRerollEvent += handleRerollTrapPrompt;
+        GameView.OnSnitchEvent += handleOnSnitch;
+        GameView.OnCompleteObjectivePressedEvent += handleOnCompleteObjective;
+
         //Start of actual game loop
-        while(!GameModel.checkForWinner())
+        while (!GameModel.checkForWinner())
         {
             GameView.updateSwingPanel(GameModel.getPlayers());
             GameView.SetTurnCount(GameModel.getCurrentTurn());
@@ -187,8 +195,7 @@ public class GameMain : MonoBehaviour
             yield return StartCoroutine(handleCurrentPlayer());
 
             if (GameModel.getCurrentPlrIdx() == totalPlayers - 1)
-            {
-                //TODO: Check if this is the last player of turn
+            {   
                 //TODO: if it is, Give items to all players and spawn a trap
                 handleRerollTrapPrompt();
             }
@@ -203,13 +210,16 @@ public class GameMain : MonoBehaviour
         print($"Player who won: {winnerIdx + 1}");
         GameView.setTxtWinner(winnerIdx + 1);
         GameView.DisplayWinner();
+
+        GameView.OnTrapSpawnRerollEvent -= handleRerollTrapPrompt;
+        GameView.OnSnitchEvent -= handleOnSnitch;
+        GameView.OnCompleteObjectivePressedEvent -= handleOnCompleteObjective;
     }
 
     private void Start()
     {
         print("GameMain is running...");
         GameModel.Reset();
-        GameView.OnTrapSpawnRerollEvent += handleRerollTrapPrompt;
         StartCoroutine(GameLoop());
     }
 }
