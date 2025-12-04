@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 using static GameEnums;
@@ -19,6 +20,30 @@ public class GameModel : MonoBehaviour
     private const int BOARD_SIZE = 6;
     private const int NUM_ROOMS = 7;
     private const int NUM_OBJECTIVES = 3;
+    private static int[,] SPAWN_COORDS = new int[4, 2] {
+        {0, 0},
+        {0, BOARD_SIZE - 1},
+        {BOARD_SIZE - 1, 0},
+        {BOARD_SIZE - 1, BOARD_SIZE - 1}
+    };
+    private static int[,] MCGUFFIN_COORDS = new int[4, 2]
+    {
+        {2, 2},
+        {2, 3},
+        {3, 2},
+        {3, 3}
+    };
+    private static int[,] ROOM_COORDS = new int[NUM_ROOMS, 2]
+    {//Note: look at it as x, y
+        {1, 0},
+        {5, 1},
+        {1, 2},
+        {4, 3},
+        {0, 4},
+        {2, 4},
+        {4, 5},
+    };
+
     //TODO: SNITCH VALUE
     private static int[] getRandomRoomAssignments()
     {
@@ -55,36 +80,40 @@ public class GameModel : MonoBehaviour
             }
         }
 
-        //TODO: Remake with new coordinate system
-        /*
-        Board[0, 4].setType(SquareType.Armory);
-        Board[1, 0].setType(SquareType.Armory);
-        Board[1, 2].setType(SquareType.Armory);
-        Board[2, 4].setType(SquareType.Armory);
-        Board[3, 1].setType(SquareType.Armory);
-        Board[4, 5].setType(SquareType.Armory);
-        Board[5, 1].setType(SquareType.Armory);
-        */
+        for (int i = 0; i < SPAWN_COORDS.Length; i++)
+        {
+            int x = SPAWN_COORDS[i, 0];
+            int y = SPAWN_COORDS[i, 1];
+
+            Board[x, y].setType(SquareType.Spawn);
+
+            x = MCGUFFIN_COORDS[i, 0];
+            y = MCGUFFIN_COORDS[i, 1];
+            Board[x, y].setType(SquareType.McGuffin);
+        }
+
+        for (int i = 0; i < NUM_ROOMS; i++)
+        {
+            int x = ROOM_COORDS[i, 0];
+            int y = ROOM_COORDS[i, 1];
+
+            Board[x, y].setType(SquareType.Armory);
+        }
 
 
-        Board[2, 2].setType(SquareType.McGuffin);
-        Board[2, 3].setType(SquareType.McGuffin);
-        Board[3, 2].setType(SquareType.McGuffin);
-        Board[3, 3].setType(SquareType.McGuffin);
-
-        int[] roomIds = getRandomRoomAssignments();
+        int[] roomIdxs = getRandomRoomAssignments();
         for (int i = 0; i < NUM_OBJECTIVES; i++)
         {
-            switch (roomIds[i])
-            {
+            int targetIdx = roomIdxs[i];
+            int x = ROOM_COORDS[targetIdx, 0];
+            int y = ROOM_COORDS[targetIdx, 1];
 
-            }
+            Board[x, y].setType(SquareType.Objective);
         }
 
-        switch (roomIds[NUM_OBJECTIVES])
-        {
-    
-        }
+        int x2 = ROOM_COORDS[NUM_OBJECTIVES, 0];
+        int y2 = ROOM_COORDS[NUM_OBJECTIVES, 1];
+        Board[x2, y2].setType(SquareType.Snitching);
     }
 
     // Getters and Setters
