@@ -14,6 +14,7 @@ public class GameView : MonoBehaviour
     [SerializeField] GameObject _containerMoveChoice;
     [SerializeField] GameObject _containerTargetChoice;
     [SerializeField] GameObject _containerBinaryChoice;
+    [SerializeField] GameObject _panelTrapPrompt;
     [SerializeField] TMP_Text _txtTurnCount;
     [SerializeField] TMP_Text _txtCurrentPlayer;
     [SerializeField] TMP_Text _txtBinaryPrompt;
@@ -29,6 +30,7 @@ public class GameView : MonoBehaviour
     private static GameObject containerMoveChoice;
     private static GameObject containerTargetChoice;
     private static GameObject containerBinaryChoice;
+    private static GameObject panelTrapPrompt;
     private static TMP_Text txtTurnCount;
     private static TMP_Text txtCurrentPlayer;
     private static TMP_Text txtBinaryPrompt;
@@ -51,6 +53,7 @@ public class GameView : MonoBehaviour
     public static event Action<bool> OnBinaryChoiceEvent; // true for Yes, false for No
     public static event Action OnRollResultContinueEvent;
     public static event Action OnCqcResultContinueEvent;
+    public static event Action OnTrapSpawnRerollEvent;
 
     private void Awake()
     {
@@ -61,6 +64,7 @@ public class GameView : MonoBehaviour
         containerMoveChoice     = _containerMoveChoice;
         containerTargetChoice   = _containerTargetChoice;
         containerBinaryChoice   = _containerBinaryChoice;
+        panelTrapPrompt         = _panelTrapPrompt;
         txtTurnCount            = _txtTurnCount;
         txtCurrentPlayer        = _txtCurrentPlayer;
         txtBinaryPrompt         = _txtBinaryPrompt;
@@ -189,6 +193,10 @@ public class GameView : MonoBehaviour
         }
     }
     
+    public static void setTrapCoord(int x, int y)
+    {
+        panelTrapPrompt.transform.Find("txtCoord").GetComponent<TMP_Text>().text = $"{(char)('a' + x)}{y + 1}";
+    }
     //Display methods
     public static void DisplayMainChoice()
     {
@@ -241,6 +249,10 @@ public class GameView : MonoBehaviour
     public static void showCqcRollResult()
     {
         butCqcResult.gameObject.SetActive(true);
+    }
+    public static void showTrapPrompt()
+    {
+        panelTrapPrompt.gameObject.SetActive(true);
     }
 
     //=====PRESS-EVENTS======
@@ -376,5 +388,15 @@ public class GameView : MonoBehaviour
         print("Cqc Result Pressed");
         butCqcResult.gameObject.SetActive(false);
         OnCqcResultContinueEvent?.Invoke();
+    }
+    
+    //Trap spawn
+    public static void OnTrapSpawnReroll()
+    {
+        OnTrapSpawnRerollEvent?.Invoke();
+    }
+    public static void OnTrapSpawnContinue()
+    {
+        panelTrapPrompt.gameObject.SetActive(false);
     }
 }
