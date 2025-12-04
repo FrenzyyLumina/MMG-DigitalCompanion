@@ -54,7 +54,31 @@ public class GameMain : MonoBehaviour
         GameView.OnBinaryChoiceEvent += handlePostMoveEvent;
         GameView.DisplayBinaryChoice();
     }
+    private void handleGeneralMove(int baseCount, bool isLoudShort)
+    {
+        int extraDiceUsed = 0; //TODO: Get the value from somewhere
+        int dicesToUsed = baseCount + extraDiceUsed;
 
+        Player curPlayer = GameModel.getCurrentPlayerToAct();
+        Inventory inv = curPlayer.getInventory();
+        for (int i = 0; i < extraDiceUsed; i++)
+        {
+            inv.removeItemByName("Dice");
+        }
+
+        if (isLoudShort)
+        {
+            Item newDice = new Item("Dice", GameEnums.ItemUseType.TurnUsable);
+            inv.addItem(newDice);
+        }
+
+        int[] baseRoles = GameModel.rollD6Dices(dicesToUsed);
+        int rollTotal = GameModel.totalFromDiceRolls(baseRoles);
+        GameView.setTxtRolls(baseRoles, rollTotal);
+
+        GameView.OnRollResultContinueEvent += handleMoveRollResult;
+        GameView.showRollResult();
+    }
     //End of Helper Methods
     private IEnumerator handleCurrentPlayer()
     {
@@ -74,35 +98,24 @@ public class GameMain : MonoBehaviour
             curPlayer.setActionState(GameEnums.ActionState.Normal);
             yield break;
         }
-
-        //TODO: addListeners
-        //Listener for Move
+        
         void handleSoft()
         {
             print("Handle Soft Triggered");
             int BASE_COUNT = 1;
-            int extraDiceUsed = 0; //TODO: Get the value from somewhere
-            int dicesToUsed = BASE_COUNT + extraDiceUsed;
-
-            for(int i = 0; i < extraDiceUsed; i++)
-            {
-                curPlayer.getInventory().removeItemByName("Dice");
-            }
-
-            int[] baseRoles = GameModel.rollD6Dices(dicesToUsed);
-            int rollTotal = GameModel.totalFromDiceRolls(baseRoles);
-            GameView.setTxtRolls(baseRoles, rollTotal);
-            
-            GameView.OnRollResultContinueEvent += handleMoveRollResult;
-            GameView.showRollResult();
+            handleGeneralMove(BASE_COUNT, false);
         }
         void handleLoudShort()
         {
-            //TODO: Copy paste from above
+            print("Handle Loud Short Triggered");
+            int BASE_COUNT = 1;
+            handleGeneralMove(BASE_COUNT, true);
         }
         void handleLoudLong()
         {
-            //TODO: Copy paste from above
+            print("Handle Loud Long Triggered");
+            int BASE_COUNT = 2;
+            handleGeneralMove(BASE_COUNT, false);
         }
 
         GameView.OnSoftPressedEvent         += handleSoft;
