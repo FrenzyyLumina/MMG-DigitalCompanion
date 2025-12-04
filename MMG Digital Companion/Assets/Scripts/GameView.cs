@@ -20,6 +20,7 @@ public class GameView : MonoBehaviour
     [SerializeField] Button _butSkipTurn;
     [SerializeField] Button _butRollResult;
     [SerializeField] Button _butWinnerResult;
+    [SerializeField] Button _butCqcResult;
 
     private static GameObject SwingPanel;
     private static GameObject containerMainChoice;
@@ -33,6 +34,7 @@ public class GameView : MonoBehaviour
     private static Button butSkipTurn;
     private static Button butRollResult;
     private static Button butWinnerResult;
+    private static Button butCqcResult;
 
     private static event Action OnAnyTurnEnd;
 
@@ -46,6 +48,7 @@ public class GameView : MonoBehaviour
     public static event Action<int> OnPlayerTargetedEvent; // Player Idx as parameter
     public static event Action<bool> OnBinaryChoiceEvent; // true for Yes, false for No
     public static event Action OnRollResultContinueEvent;
+    public static event Action OnCqcResultContinueEvent;
 
     private void Awake()
     {
@@ -62,6 +65,7 @@ public class GameView : MonoBehaviour
         butSkipTurn             = _butSkipTurn;
         butRollResult           = _butRollResult;
         butWinnerResult         = _butWinnerResult;
+        butCqcResult            = _butCqcResult;
     }
 
     // Basic Features
@@ -91,6 +95,49 @@ public class GameView : MonoBehaviour
         txtDiceRollResult.text = $"Dice Rolls: {rollsText}";
         txtTotalResult.text = $"Total: {total}";
 
+    }
+    public static void setCqcRolls(int atkrIdx, int[] atkrRolls, int atkrTotal, int atkeIdx,  int[] atkeRolls, int atkeTotal)
+    {
+        Transform attackerObj = butCqcResult.transform.Find("Attacker");
+        Transform attackeeObj = butCqcResult.transform.Find("Attackee");
+
+        void setInfo(Transform obj, int idx, int[] rolls, int total, string prefix, GameEnums.CQCResult cqcResult)
+        {
+            TMP_Text txtPlayer = obj.transform.Find("txtPlayer").GetComponent<TMP_Text>();
+            TMP_Text txtDiceRollResult = obj.transform.Find("txtDiceRollResult")?.GetComponent<TMP_Text>();
+            TMP_Text txtTotalResult = obj.transform.Find("txtTotalResult")?.GetComponent<TMP_Text>();
+            TMP_Text txtCqcResult = obj.transform.Find("txtCqcResult")?.GetComponent <TMP_Text>();
+
+            txtPlayer.text = $"{prefix}\nPlayer {idx + 1}";
+            string rollsText = string.Join(", ", rolls);
+            txtDiceRollResult.text = $"Dice Rolls: {rollsText}";
+            txtTotalResult.text = $"Total: {total}";
+
+            switch (cqcResult)
+            {
+                case GameEnums.CQCResult.Winner:
+                    txtCqcResult.text = "Winner!";
+                    break;
+                case GameEnums.CQCResult.Loser:
+                    txtCqcResult.text = "Loser!";
+                    break;
+                case GameEnums.CQCResult.Tie:
+                    txtCqcResult.text = "Tie!";
+                    break;
+            }
+        }
+
+        bool isTie = atkrTotal == atkeTotal;
+        setInfo(attackerObj, atkrIdx, atkrRolls, atkrTotal, "Attacker",
+            isTie? GameEnums.CQCResult.Tie :
+            atkrTotal > atkeTotal? GameEnums.CQCResult.Winner :
+            GameEnums.CQCResult.Loser
+        );
+        setInfo(attackeeObj, atkeIdx, atkeRolls, atkeTotal, "Attackee",
+            isTie? GameEnums.CQCResult.Tie :
+            atkeTotal > atkrTotal? GameEnums.CQCResult.Winner :
+            GameEnums.CQCResult.Loser
+        );
     }
     public static void updateSwingPanel(Player[] players)
     {
@@ -171,6 +218,11 @@ public class GameView : MonoBehaviour
     public static void showRollResult()
     {
         butRollResult.gameObject.SetActive(true);
+    }
+
+    public static void showCqcRollResult()
+    {
+        butCqcResult.gameObject.SetActive(true);
     }
 
     //=====PRESS-EVENTS======
@@ -298,5 +350,12 @@ public class GameView : MonoBehaviour
         print("Roll Result Pressed (View)");
         butRollResult.gameObject.SetActive(false);
         OnRollResultContinueEvent?.Invoke();
+    }
+
+    public static void OnCqcResultPressed()
+    {
+        print("Cqc Result Pressed");
+        butCqcResult.gameObject.SetActive(false);
+        OnCqcResultContinueEvent?.Invoke();
     }
 }
