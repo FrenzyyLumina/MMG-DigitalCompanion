@@ -17,6 +17,11 @@ public class MainMenuView : MonoBehaviour
         if (this.CoverImage != null)
         {
             this.CoverImage.SetActive(false);
+            Debug.Log("CoverImage hidden");
+        }
+        else
+        {
+            Debug.LogWarning("CoverImage is not assigned in MainMenuView!");
         }
     }
 
@@ -27,6 +32,7 @@ public class MainMenuView : MonoBehaviour
         if (this.CoverImage != null)
         {
             this.CoverImage.SetActive(true);
+            Debug.Log("CoverImage shown");
         }
     }
 
