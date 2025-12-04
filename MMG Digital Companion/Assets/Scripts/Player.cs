@@ -11,6 +11,8 @@ public class Player
     private readonly Inventory inventory;
     private List<float> modifiers; //Multiplicative
     private bool isRoleRevealed;
+    private bool isInRoom;
+    private bool isDoingObjective;
 
     public Player(/*GameEnums.Role role*/)
     {
