@@ -24,15 +24,21 @@ public class MainMenuView : MonoBehaviour
     public void OnTwoPlayerPressed()
     {
         print("Two Player Pressed");
+        GameManager.Instance.SetPlayerCount(2);
+        GameManager.Instance.StartGameStartScene();
     }
 
     public void OnThreePlayerPressed()
     {
         print("Three Player Pressed");
+        GameManager.Instance.SetPlayerCount(3);
+        GameManager.Instance.StartGameStartScene();
     }
 
     public void OnFourPlayerPressed()
     {
         print("Four Player Pressed");
+        GameManager.Instance.SetPlayerCount(4);
+        GameManager.Instance.StartGameStartScene();
     }
 }

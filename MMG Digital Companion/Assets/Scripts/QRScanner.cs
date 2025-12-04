@@ -83,6 +83,7 @@ public class QRScanner : MonoBehaviour
             if (result != null)
             {
                 _textResult.text = result.Text;
+                ProcessQRCode(result.Text);
             }
             else
             {
@@ -93,5 +94,49 @@ public class QRScanner : MonoBehaviour
         {
             _textResult.text = "FAIL!";
         }
+    }
+
+    private void ProcessQRCode(string qrContent)
+    {
+        // Parse the QR code content to determine the role
+        GameEnums.Role scannedRole = GameEnums.Role.Gent; // Default
+
+        // Convert QR content to role (case-insensitive)
+        string content = qrContent.Trim().ToLower();
+        
+        if (content.Contains("gent"))
+        {
+            scannedRole = GameEnums.Role.Gent;
+        }
+        else if (content.Contains("soldier"))
+        {
+            scannedRole = GameEnums.Role.Soldier;
+        }
+        else if (content.Contains("thief"))
+        {
+            scannedRole = GameEnums.Role.Thief;
+        }
+        else
+        {
+            Debug.LogWarning($"Unknown role in QR code: {qrContent}. Defaulting to Gent.");
+        }
+
+        // Stop the camera
+        if (_camTexture != null && _camTexture.isPlaying)
+        {
+            _camTexture.Stop();
+        }
+
+        // Return to GameStart scene with the scanned role
+        StartCoroutine(ReturnToGameStart(scannedRole));
+    }
+
+    private IEnumerator ReturnToGameStart(GameEnums.Role role)
+    {
+        // Wait a moment to show the result
+        yield return new WaitForSeconds(1.5f);
+        
+        // Use GameManager to handle the transition
+        GameManager.Instance.ReturnFromQRScanner(role);
     }
 }

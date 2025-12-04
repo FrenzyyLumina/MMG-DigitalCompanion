@@ -6,7 +6,7 @@ using UnityEngine;
 public class GameMain : MonoBehaviour
 {
     private Player[] Players;
-    private int TotalPlayers = 2;
+    private int TotalPlayers;
     private int CurrentPlayerIdx = 0;
     private int CurrentTurn = 1;
     private Player winner;
@@ -72,15 +72,21 @@ public class GameMain : MonoBehaviour
 
     private void StartGame()
     {
+        // Get player data from GameManager
+        TotalPlayers = GameManager.Instance.TotalPlayers;
+        
         //Initialize
         this.Players = new Player[this.TotalPlayers];
         for (int i = 0; i < this.TotalPlayers; i++)
         {
             this.Players[i] = new Player();
+            // Set the role from the scanned QR codes
+            this.Players[i].setRole(GameManager.Instance.PlayerRoles[i]);
+            Debug.Log($"Player {i + 1} initialized with role: {GameManager.Instance.PlayerRoles[i]}");
         }
 
         //Game Start
-        //TODO: Let Players scan roles
+        //Roles already scanned in GameStart scene
         
         //Start of actual game loop
         //TODO: handle player turn
