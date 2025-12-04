@@ -14,6 +14,7 @@ public class GameView : MonoBehaviour
     [SerializeField] GameObject _containerTargetChoice;
     [SerializeField] GameObject _containerBinaryChoice;
     [SerializeField] TMP_Text _txtTurnCount;
+    [SerializeField] TMP_Text _txtCurrentPlayer;
     [SerializeField] TMP_Text _txtBinaryPrompt;
     [SerializeField] Button _butSkipTurn;
     [SerializeField] Button _butRollResult;
@@ -24,6 +25,7 @@ public class GameView : MonoBehaviour
     private static GameObject containerTargetChoice;
     private static GameObject containerBinaryChoice;
     private static TMP_Text txtTurnCount;
+    private static TMP_Text txtCurrentPlayer;
     private static TMP_Text txtBinaryPrompt;
     private static Button butSkipTurn;
     private static Button butRollResult;
@@ -44,12 +46,13 @@ public class GameView : MonoBehaviour
     private void Awake()
     {
         // Copy non-static references to static fields
-        txtTurnCount            = _txtTurnCount;
         SwingPanel              = _SwingPanel;
         containerMainChoice     = _containerMainChoice;
         containerMoveChoice     = _containerMoveChoice;
         containerTargetChoice   = _containerTargetChoice;
         containerBinaryChoice   = _containerBinaryChoice;
+        txtTurnCount            = _txtTurnCount;
+        txtCurrentPlayer        = _txtCurrentPlayer;
         txtBinaryPrompt         = _txtBinaryPrompt;
         butSkipTurn             = _butSkipTurn;
         butRollResult           = _butRollResult;
@@ -60,6 +63,10 @@ public class GameView : MonoBehaviour
     {
         //txtTurnCount.GetComponent<UnityEngine.UI.Text>().text = "Turn: " + turnCount.ToString();
         txtTurnCount.GetComponent<TMP_Text>().text = "Turn: " + turnCount.ToString();
+    }
+    public static void SetCurrentPlayer(int plrNumber)
+    {
+        txtCurrentPlayer.text = $"Player {plrNumber}'s Turn";
     }
     public static void SetBinaryPrompt(string prompt)
     {
