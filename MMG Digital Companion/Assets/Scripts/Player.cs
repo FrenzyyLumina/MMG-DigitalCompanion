@@ -33,6 +33,19 @@ public class Player : MonoBehaviour
     {
         return this.action;
     }
+    public Inventory getInventory()
+    {
+        return this.inventory;
+    }
+    public float getModifier()
+    {
+        float baseMod = 1;
+        for ( int i = 0; i < this.modifiers.Count; i++)
+        {
+            baseMod *= this.modifiers[i];
+        }
+        return baseMod;
+    }
 
 
     public void setState(GameEnums.HealthState state)
