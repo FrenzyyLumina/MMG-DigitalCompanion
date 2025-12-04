@@ -287,4 +287,14 @@ public class GameModel : MonoBehaviour
             }
         }
     }
+
+    public static void incObjective()
+    {
+        numObjectivesDone++;
+    }
+
+    public static bool hasCompletedAllObjectives()
+    {
+        return numObjectivesDone == NUM_OBJECTIVES;
+    }
 }
