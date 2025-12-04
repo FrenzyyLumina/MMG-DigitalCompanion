@@ -5,6 +5,57 @@ using UnityEngine;
 
 public class GameMain : MonoBehaviour
 {
+    //Helper Functions
+    private void handleCqcTarget(int targetIdx)
+    {
+        GameView.OnPlayerTargetedEvent -= handleCqcTarget;
+        print($"CQC Chosen: {targetIdx}");
+
+        Player targetPlr = GameModel.getPlayerByIdx(targetIdx);
+        GameEnums.HealthState curState = targetPlr.getHealthState();
+        
+        switch (curState)
+        {
+            case GameEnums.HealthState.Normal:
+                targetPlr.setState(GameEnums.HealthState.Wounded);
+                break;
+
+            case GameEnums.HealthState.Wounded:
+                targetPlr.setState(GameEnums.HealthState.Dead);
+                break;
+            default:
+                print($"Invalid Case: targetted a player with state: {curState}");
+                break;
+
+        }
+
+        GameView.OnTurnEnd();
+    }
+    private void handlePostMoveEvent(bool yes)
+    {
+        GameView.OnBinaryChoiceEvent -= handlePostMoveEvent;
+        print($"Choice selected: {yes}");
+
+        if (!yes) GameView.OnTurnEnd();
+
+        GameView.OnPlayerTargetedEvent += handleCqcTarget;
+        GameView.DisplayTargetChoiceWithoutOne(
+            GameModel.getTotalPlayers(),
+            GameModel.getCurrentPlrIdx()
+        );
+    }
+    private void handleMoveRollResult()
+    {
+        GameView.OnRollResultContinueEvent -= handleMoveRollResult;
+
+        print("Player wants to continue");
+        GameView.SetBinaryPrompt("Did you engage CQC with another player?");
+
+        GameView.OnBinaryChoiceEvent += handlePostMoveEvent;
+        GameView.DisplayBinaryChoice();
+    }
+
+    //End of Helper Methods
     private IEnumerator handleCurrentPlayer()
     {
         Player curPlayer = GameModel.getCurrentPlayerToAct();
@@ -40,16 +91,9 @@ public class GameMain : MonoBehaviour
 
             int[] baseRoles = GameModel.rollD6Dices(dicesToUsed);
             int rollTotal = GameModel.totalFromDiceRolls(baseRoles);
-            //TODO: Set Text in View
             GameView.setTxtRolls(baseRoles, rollTotal);
             
-            void handleRollResult()
-            {
-                print("Player wants to continue");
-                GameView.OnRollResultContinueEvent -= handleRollResult;
-            }
-
-            GameView.OnRollResultContinueEvent += handleRollResult;
+            GameView.OnRollResultContinueEvent += handleMoveRollResult;
             GameView.showRollResult();
         }
         void handleLoudShort()
@@ -88,9 +132,13 @@ public class GameMain : MonoBehaviour
         while(!GameModel.checkForWinner())
         {
             GameView.SetTurnCount(GameModel.getCurrentTurn());
+            GameView.SetCurrentPlayer(GameModel.getCurrentPlrIdx() + 1);
             yield return StartCoroutine(handleCurrentPlayer());
             GameModel.moveToNextPlayer();
         }
+
+        print("We have a winner!!");
+        print($"Player who won: {GameModel.getCurrentPlrIdx() + 1}");
     }
 
     private void Start()
