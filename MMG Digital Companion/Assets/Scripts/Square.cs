@@ -2,13 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Room
+public class Square
 {
     private int[] coordinate;
     private GameEnums.SquareType type;
     private bool isCompleted;
 
-    public Room(int x, int y, GameEnums.SquareType type)
+    public Square(int x, int y, GameEnums.SquareType type)
     {
         coordinate = new int[2] { x, y };
         isCompleted = false;
