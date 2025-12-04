@@ -149,8 +149,11 @@ public class GameMain : MonoBehaviour
         }
 
         print("We have a winner!!");
-        print($"Player who won: {GameModel.getCurrentPlrIdx() + 1}");
-        GameView.setTxtWinner(GameModel.getCurrentPlrIdx() + 1);
+        //Player winner = GameModel.getWinner();
+        int winnerIdx = GameModel.getIdxOfWinner();
+
+        print($"Player who won: {winnerIdx + 1}");
+        GameView.setTxtWinner(winnerIdx);
         GameView.DisplayWinner();
     }
 
