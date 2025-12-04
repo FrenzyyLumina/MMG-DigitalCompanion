@@ -46,4 +46,15 @@ public static class GameEnums
         TurnUsable,
         CqcUsable,
     }
+
+    public enum SquareType
+    {
+        Empty,
+        Room,
+        Objective,
+        Snitching,
+        Armory,
+        McGuffin,
+        Trap,
+    }
 }
