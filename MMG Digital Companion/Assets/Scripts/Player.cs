@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : MonoBehaviour
+public class Player
 {
-    private GameEnums.HealthState   state;
+    private GameEnums.HealthState   healthState;
     private GameEnums.Role role;
     private GameEnums.ActionState   action;
 
@@ -13,7 +13,7 @@ public class Player : MonoBehaviour
 
     public Player(/*GameEnums.Role role*/)
     {
-        this.state = GameEnums.HealthState.Normal;
+        this.healthState = GameEnums.HealthState.Normal;
         //this.role = role;
         this.action = GameEnums.ActionState.Normal;
         
@@ -23,7 +23,7 @@ public class Player : MonoBehaviour
 
     public GameEnums.HealthState getHealthState()
     {
-        return this.state;
+        return this.healthState;
     }
     public GameEnums.Role getPlayerRole()
     {
@@ -33,11 +33,24 @@ public class Player : MonoBehaviour
     {
         return this.action;
     }
+    public Inventory getInventory()
+    {
+        return this.inventory;
+    }
+    public float getModifier()
+    {
+        float baseMod = 1;
+        for ( int i = 0; i < this.modifiers.Count; i++)
+        {
+            baseMod *= this.modifiers[i];
+        }
+        return baseMod;
+    }
 
 
     public void setState(GameEnums.HealthState state)
     {
-        this.state = state;
+        this.healthState = state;
     }
 
     public void setRole(GameEnums.Role role)

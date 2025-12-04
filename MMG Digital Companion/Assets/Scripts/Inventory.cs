@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEditor.Progress;
 
-public class Inventory : MonoBehaviour
+public class Inventory
 {
     private List<Item> inventory;
 
@@ -14,12 +15,45 @@ public class Inventory : MonoBehaviour
     {
         return this.inventory;
     }
+    public Item findItemByName(string name)
+    {
+        foreach (Item item in inventory)
+        {
+            if (item.getItemName() == name)
+            {
+                return item;
+            }
+        }
+
+        return null;
+    }
     public void addItem(Item item)
     {
-        this.inventory.Add(item);
+        Item exist = this.findItemByName(item.getItemName());
+        if (exist != null)
+        {
+            exist.incCount();
+        }
+        else
+        {
+            this.inventory.Add(item);
+        }
+    }
+    public void removeItemByName(string name)
+    {
+        Item exist = this.findItemByName(name);
+        if (exist == null)
+        {
+            Debug.Log("No Item Found");
+            return;
+        }
+
+        exist.decCount();
+        if (exist.getCount() == 0)
+            this.inventory.Remove(exist);
     }
     public void removeItem(Item item)
     {
-        this.inventory.Remove(item);
+        this.removeItemByName(item.getItemName());
     }
 }

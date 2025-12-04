@@ -2,15 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Item : MonoBehaviour
+public class Item
 {
     private readonly string itemName;
     private readonly GameEnums.ItemUseType itemUseType;
+    private int count;
 
     public Item(string name, GameEnums.ItemUseType useType)
     {
         this.itemName = name;
         this.itemUseType = useType;
+        this.count = 1;
     }
 
     public string getItemName()
@@ -18,5 +20,16 @@ public class Item : MonoBehaviour
         return this.itemName;
     }
 
-
+    public int getCount()
+    {
+        return this.count;
+    }
+    public void incCount()
+    {
+        this.count++;
+    }
+    public void decCount()
+    {
+        this.count--;
+    }
 }

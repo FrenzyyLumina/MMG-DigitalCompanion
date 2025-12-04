@@ -14,63 +14,117 @@ public class GameMain : MonoBehaviour
     //Rolls numDice amount of d6
     private int[] rollD6Dices(int numDice)
     {
-        int[] rolls = new int[numDice];
+        GameView.OnPlayerTargetedEvent -= handleCqcTarget;
+        print($"CQC Chosen: {targetIdx}");
 
-        for (int i = 0; i < numDice; i++)
+        Player targetPlr = GameModel.getPlayerByIdx(targetIdx);
+        GameEnums.HealthState curState = targetPlr.getHealthState();
+        
+        switch (curState)
         {
-            rolls[i] = Random.Range(1, 6);
+            case GameEnums.HealthState.Normal:
+                targetPlr.setState(GameEnums.HealthState.Wounded);
+                break;
+
+            case GameEnums.HealthState.Wounded:
+                targetPlr.setState(GameEnums.HealthState.Dead);
+                break;
+            default:
+                print($"Invalid Case: targetted a player with state: {curState}");
+                break;
+
         }
 
-        return rolls;
+        GameView.OnTurnEnd();
+    }
+    private void handlePostMoveEvent(bool yes)
+    {
+        GameView.OnBinaryChoiceEvent -= handlePostMoveEvent;
+        print($"Choice selected: {yes}");
+
+        if (!yes) GameView.OnTurnEnd();
+
+        GameView.OnPlayerTargetedEvent += handleCqcTarget;
+        GameView.DisplayTargetChoiceWithoutOne(
+            GameModel.getTotalPlayers(),
+            GameModel.getCurrentPlrIdx()
+        );
+    }
+    private void handleMoveRollResult()
+    {
+        GameView.OnRollResultContinueEvent -= handleMoveRollResult;
+
+        print("Player wants to continue");
+        GameView.SetBinaryPrompt("Did you engage CQC with another player?");
+
+        GameView.OnBinaryChoiceEvent += handlePostMoveEvent;
+        GameView.DisplayBinaryChoice();
     }
 
-    private bool checkForWinner()
+    //End of Helper Methods
+    private IEnumerator handleCurrentPlayer()
     {
-        if (this.winner != null) return true;
-
-        //Check if there's 1 player remaining
-        Player AlivePlayer = null;
-        for (int i = 0; i < this.TotalPlayers; i++)
-        {
-            GameEnums.HealthState healthState = this.Players[i].getHealthState();
-            if (healthState == GameEnums.HealthState.Dead) continue;
-            if (AlivePlayer != null) return false; //there's no winner if >2 alive players
-            AlivePlayer = this.Players[i];
-        }
-
-        if (AlivePlayer != null)
-        {
-            this.winner = AlivePlayer;
-            return true;
-        }
-
-        return false;
-    }
-
-    private void handleCurrentPlayer(int idx)
-    {
-        Player curPlayer = Players[idx];
+        Player curPlayer = GameModel.getCurrentPlayerToAct();
         GameEnums.HealthState healthState = curPlayer.getHealthState();
         GameEnums.ActionState actionState = curPlayer.getActionState();
 
         //Auto skip if player is dead
-        if (healthState == GameEnums.HealthState.Dead) return;
+        if (healthState == GameEnums.HealthState.Dead) yield break;
 
         //TODO: Properly prompt stunned / turn skip
         if (actionState == GameEnums.ActionState.Stunned)
         {
             //TODO: Disable all main choice actions
             GameView.DisplayMainChoice();
-            //TODO: Wait for turn skip
+            yield return GameView.WaitForTurnEnd();
             curPlayer.setActionState(GameEnums.ActionState.Normal);
-            return;
+            yield break;
         }
 
+        //TODO: addListeners
+        //Listener for Move
+        void handleSoft()
+        {
+            print("Handle Soft Triggered");
+            int BASE_COUNT = 1;
+            int extraDiceUsed = 0; //TODO: Get the value from somewhere
+            int dicesToUsed = BASE_COUNT + extraDiceUsed;
+
+            for(int i = 0; i < extraDiceUsed; i++)
+            {
+                curPlayer.getInventory().removeItemByName("Dice");
+            }
+
+            int[] baseRoles = GameModel.rollD6Dices(dicesToUsed);
+            int rollTotal = GameModel.totalFromDiceRolls(baseRoles);
+            GameView.setTxtRolls(baseRoles, rollTotal);
+            
+            GameView.OnRollResultContinueEvent += handleMoveRollResult;
+            GameView.showRollResult();
+        }
+        void handleLoudShort()
+        {
+            //TODO: Copy paste from above
+        }
+        void handleLoudLong()
+        {
+            //TODO: Copy paste from above
+        }
+
+        GameView.OnSoftPressedEvent         += handleSoft;
+        GameView.OnLoudShortPressedEvent    += handleLoudShort;
+        GameView.OnLoudLongPressedEvent     += handleLoudLong;
+
+        
         GameView.DisplayMainChoice();
-        //TODO: Wait for turn end
+        yield return GameView.WaitForTurnEnd();
+        
+        GameView.OnSoftPressedEvent         -= handleSoft;
+        GameView.OnLoudShortPressedEvent    -= handleLoudShort;
+        GameView.OnLoudLongPressedEvent     -= handleLoudLong;
     }
 
-    private void StartGame()
+    private IEnumerator GameLoop()
     {
         // Get player data from GameManager
         TotalPlayers = GameManager.Instance.TotalPlayers;
@@ -90,17 +144,21 @@ public class GameMain : MonoBehaviour
         
         //Start of actual game loop
         //TODO: handle player turn
-        while(!checkForWinner())
+        while(!GameModel.checkForWinner())
         {
-            GameView.SetTurnCount(this.CurrentTurn);
-
-            handleCurrentPlayer(this.CurrentPlayerIdx);
-            this.CurrentPlayerIdx++;
-            if (this.CurrentPlayerIdx == this.TotalPlayers)
-            {
-                this.CurrentPlayerIdx = 0;
-                this.CurrentTurn++;
-            }
+            GameView.SetTurnCount(GameModel.getCurrentTurn());
+            GameView.SetCurrentPlayer(GameModel.getCurrentPlrIdx() + 1);
+            yield return StartCoroutine(handleCurrentPlayer());
+            GameModel.moveToNextPlayer();
         }
+
+        print("We have a winner!!");
+        print($"Player who won: {GameModel.getCurrentPlrIdx() + 1}");
+    }
+
+    private void Start()
+    {
+        print("GameMain is running...");
+        StartCoroutine(GameLoop());
     }
 }
