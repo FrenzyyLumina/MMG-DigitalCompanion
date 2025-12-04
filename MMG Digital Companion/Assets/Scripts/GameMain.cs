@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class GameMain : MonoBehaviour
 {
-    private IEnumerator handleCurrentPlayer(int idx)
+    private IEnumerator handleCurrentPlayer()
     {
         Player curPlayer = GameModel.getCurrentPlayerToAct();
         GameEnums.HealthState healthState = curPlayer.getHealthState();
@@ -30,7 +30,7 @@ public class GameMain : MonoBehaviour
         yield return GameView.WaitForTurnEnd();
     }
 
-    private void StartGame()
+    private IEnumerator GameLoop()
     {
         //Initialize
         int nTotalPlrs = 2; //TODO: Change this
@@ -45,9 +45,13 @@ public class GameMain : MonoBehaviour
         while(!GameModel.checkForWinner())
         {
             GameView.SetTurnCount(GameModel.getCurrentTurn());
-
-            handleCurrentPlayer();
+            yield return StartCoroutine(handleCurrentPlayer());
             GameModel.moveToNextPlayer();
         }
+    }
+
+    private void Start()
+    {
+        StartCoroutine(GameLoop());
     }
 }
