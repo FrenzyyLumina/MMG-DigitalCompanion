@@ -17,6 +17,7 @@ public static class GameEnums
         Stunned,
         Skipped,
     }
+
     public enum Role
     {
         Unknown,
@@ -24,6 +25,21 @@ public static class GameEnums
         Soldier,
         Thief,
     }
+
+    public enum Movement
+    {
+        None,
+        Soft,
+        Loud
+    }
+
+    public enum CQCResult
+    {
+        Winner,
+        Loser,
+        Tie
+    }
+
     public enum ItemUseType
     {
         Passive,
