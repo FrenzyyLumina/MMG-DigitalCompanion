@@ -61,6 +61,17 @@ public class GameModel : MonoBehaviour
 
         return rolls;
     }
+    public static int totalFromDiceRolls(int[] rolls)
+    {
+        int total = 0;
+
+        for (int i = 0; i < rolls.Length; i++)
+        {
+            total += rolls[i];
+        }
+
+        return total;
+    }
 
     public static bool checkForWinner()
     {
