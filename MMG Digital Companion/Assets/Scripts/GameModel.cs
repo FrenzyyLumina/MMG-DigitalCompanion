@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 
 public class GameModel : MonoBehaviour
@@ -15,7 +16,10 @@ public class GameModel : MonoBehaviour
     {
         return Players;
     }
-
+    public static Player getPlayerByIdx(int idx)
+    {
+        return Players[idx];
+    }
     public static int getTotalPlayers()
     {
         return TotalPlayers;
@@ -37,6 +41,22 @@ public class GameModel : MonoBehaviour
     public static int getCurrentTurn()
     {
         return CurrentTurn;
+    }
+    public static Player getWinner()
+    {
+        return winner;
+    }
+    public static int getIdxOfWinner()
+    {
+        for (int i = 0; i < TotalPlayers; i++)
+        {
+            if (Players[i] == winner)
+            {
+                return i;
+            }
+        }
+
+        return -1;
     }
 
     //Handles turns
