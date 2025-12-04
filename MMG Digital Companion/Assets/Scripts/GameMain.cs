@@ -121,26 +121,25 @@ public class GameMain : MonoBehaviour
     private IEnumerator GameLoop()
     {
         // Get player data from GameManager
-        //TotalPlayers = GameManager.Instance.TotalPlayers;
-        int totalPlayers = GameManager.Instance.TotalPlayers;
+        //int totalPlayers = GameManager.Instance.TotalPlayers;
+        int totalPlayers = 2;
         GameModel.setTotalPlayers(totalPlayers);
 
         //Initialize
-        //this.Players = new Player[this.TotalPlayers];
+        /*
         Player[] players = GameModel.getPlayers();
         for (int i = 0; i < totalPlayers; i++)
         {
-            //this.Players[i] = new Player();
             // Set the role from the scanned QR codes
             players[i].setRole(GameManager.Instance.PlayerRoles[i]);
             Debug.Log($"Player {i + 1} initialized with role: {GameManager.Instance.PlayerRoles[i]}");
         }
+        */
 
         //Game Start
         //Roles already scanned in GameStart scene
         
         //Start of actual game loop
-        //TODO: handle player turn
         while(!GameModel.checkForWinner())
         {
             GameView.SetTurnCount(GameModel.getCurrentTurn());
