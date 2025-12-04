@@ -39,7 +39,7 @@ public class GameView : MonoBehaviour
     public static event Action OnSoftPressedEvent;
     public static event Action OnLoudShortPressedEvent;
     public static event Action OnLoudLongPressedEvent;
-    public static event Action<string> OnPlayerTargetedEvent; // Player ID as parameter
+    public static event Action<int> OnPlayerTargetedEvent; // Player Idx as parameter
     public static event Action<bool> OnBinaryChoiceEvent; // true for Yes, false for No
     public static event Action OnRollResultContinueEvent;
 
@@ -81,8 +81,26 @@ public class GameView : MonoBehaviour
         containerTargetChoice.SetActive(false);
         containerBinaryChoice.SetActive(false);
     }
-    public static void DisplayTargetChoice()
+    public static void DisplayTargetChoiceWithoutOne(int numPlrs, int plrIdx)
     {
+        Transform butContainer = containerTargetChoice.transform.Find("PlayerChoice");
+
+        // Get all buttons in the container
+        Button[] playerButtons = butContainer.GetComponentsInChildren<Button>(true);
+
+        // Make sure we have enough buttons
+        int i = 0;
+        foreach (Button btn in playerButtons)
+        {
+            btn.gameObject.SetActive(false);
+            if (i < numPlrs && i != plrIdx)
+            {
+                btn.gameObject.SetActive(true);
+            }
+
+            i++;
+        }
+
         containerMainChoice.SetActive(false);
         containerMoveChoice.SetActive(false);
         containerTargetChoice.SetActive(true);
@@ -182,14 +200,22 @@ public class GameView : MonoBehaviour
     public static void OnPlayerAPressed()
     {
         print("Player A Targeted");
+        OnPlayerTargetedEvent?.Invoke(0);
     }
     public static void OnPlayerBPressed()
     {
         print("Player B Targeted");
+        OnPlayerTargetedEvent?.Invoke(1);
     }
     public static void OnPlayerCPressed()
     {
         print("Player C Targeted");
+        OnPlayerTargetedEvent?.Invoke(2);
+    }
+    public static void OnPlayerDPressed()
+    {
+        print("Player D Targeted");
+        OnPlayerTargetedEvent?.Invoke(3);
     }
 
     // Binary Choices
