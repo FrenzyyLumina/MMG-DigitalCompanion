@@ -3,25 +3,36 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 // using UnityEditor.Rendering.LookDev; -- commented due to compiler error (unused import)
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MainMenuView : MonoBehaviour
 {
     [SerializeField] private GameObject SidePanel;
     [SerializeField] private GameObject containerOptions;
-    [SerializeField] private GameObject CoverImage;
+    
+    private Image coverImage;
+
+    void Start()
+    {
+        // Find the CoverImage by name
+        GameObject coverImageObj = GameObject.Find("CoverImage");
+        if (coverImageObj != null)
+        {
+            coverImage = coverImageObj.GetComponent<Image>();
+        }
+        else
+        {
+            Debug.LogWarning("CoverImage GameObject not found!");
+        }
+    }
 
     public void OnOptionsPressed()
     {
         this.SidePanel.SetActive(false);
         this.containerOptions.SetActive(true);
-        if (this.CoverImage != null)
+        if (coverImage != null)
         {
-            this.CoverImage.SetActive(false);
-            Debug.Log("CoverImage hidden");
-        }
-        else
-        {
-            Debug.LogWarning("CoverImage is not assigned in MainMenuView!");
+            coverImage.enabled = false;
         }
     }
 
@@ -29,10 +40,9 @@ public class MainMenuView : MonoBehaviour
     {
         this.SidePanel.SetActive(true);
         this.containerOptions.SetActive(false);
-        if (this.CoverImage != null)
+        if (coverImage != null)
         {
-            this.CoverImage.SetActive(true);
-            Debug.Log("CoverImage shown");
+            coverImage.enabled = true;
         }
     }
 
