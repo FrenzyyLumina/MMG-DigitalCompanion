@@ -17,6 +17,7 @@ public class GameView : MonoBehaviour
     [SerializeField] static GameObject containerBinaryChoice;
     [SerializeField] static GameObject txtBinaryPrompt;
     [SerializeField] static Button butSkipTurn;
+    [SerializeField] static Button butRollResult;
 
     //private static bool turnEnded = false;
     private static event Action OnAnyTurnEnd;
@@ -30,6 +31,7 @@ public class GameView : MonoBehaviour
     public static event Action OnLoudLongPressedEvent;
     public static event Action<string> OnPlayerTargetedEvent; // Player ID as parameter
     public static event Action<bool> OnBinaryChoiceEvent; // true for Yes, false for No
+    public static event Action OnRollResultContinueEvent;
 
 
 
@@ -175,5 +177,25 @@ public class GameView : MonoBehaviour
         print("No");
         //DisplayMainChoice();
         OnBinaryChoiceEvent?.Invoke(false);
+    }
+
+    // Roll Result
+    public static void setTxtRolls(int[] rolls, int total)
+    {
+        TMP_Text txtDiceRollResult = butRollResult.transform.Find("txtDiceRollResult")?.GetComponent<TMP_Text>();
+        TMP_Text txtTotalResult = butRollResult.transform.Find("txtTotalResult")?.GetComponent<TMP_Text>();
+
+        string rollsText = string.Join(", ", rolls);
+        txtDiceRollResult.text = string.Format("Dice Rolls: %s", rollsText);
+        txtTotalResult.text = string.Format("Total: %d", total);
+    }
+    public static void showRollResult()
+    {
+        butRollResult.gameObject.SetActive(true);
+    }
+    public static void OnRollResultPressed()
+    {
+        butRollResult.gameObject.SetActive(false);
+        OnRollResultContinueEvent?.Invoke();
     }
 }
