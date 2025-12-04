@@ -16,8 +16,10 @@ public class GameView : MonoBehaviour
     [SerializeField] TMP_Text _txtTurnCount;
     [SerializeField] TMP_Text _txtCurrentPlayer;
     [SerializeField] TMP_Text _txtBinaryPrompt;
+    [SerializeField] TMP_Text _txtWinner;
     [SerializeField] Button _butSkipTurn;
     [SerializeField] Button _butRollResult;
+    [SerializeField] Button _butWinnerResult;
 
     private static GameObject SwingPanel;
     private static GameObject containerMainChoice;
@@ -27,8 +29,10 @@ public class GameView : MonoBehaviour
     private static TMP_Text txtTurnCount;
     private static TMP_Text txtCurrentPlayer;
     private static TMP_Text txtBinaryPrompt;
+    private static TMP_Text txtWinner;
     private static Button butSkipTurn;
     private static Button butRollResult;
+    private static Button butWinnerResult;
 
     private static event Action OnAnyTurnEnd;
 
@@ -54,8 +58,10 @@ public class GameView : MonoBehaviour
         txtTurnCount            = _txtTurnCount;
         txtCurrentPlayer        = _txtCurrentPlayer;
         txtBinaryPrompt         = _txtBinaryPrompt;
+        txtWinner               = _txtWinner;
         butSkipTurn             = _butSkipTurn;
         butRollResult           = _butRollResult;
+        butWinnerResult         = _butWinnerResult;
     }
 
     // Basic Features
@@ -113,7 +119,10 @@ public class GameView : MonoBehaviour
         containerTargetChoice.SetActive(false);
         containerBinaryChoice.SetActive(true);
     }
-
+    public static void DisplayWinner()
+    {
+        butWinnerResult.gameObject.SetActive(true);
+    }
     public static void OnViewPlayersPressed()
     {
         SwingPanel.SetActive(true);
@@ -252,5 +261,11 @@ public class GameView : MonoBehaviour
         print("Roll Result Pressed (View)");
         butRollResult.gameObject.SetActive(false);
         OnRollResultContinueEvent?.Invoke();
+    }
+
+    // Winner Result
+    public static void setTxtWinner(int plrIdx)
+    {
+        txtWinner.text = $"Player: {plrIdx + 1}";
     }
 }
