@@ -19,15 +19,59 @@ public class GameMain : MonoBehaviour
         {
             //TODO: Disable all main choice actions
             GameView.DisplayMainChoice();
-            //TODO: Wait for turn skip
             yield return GameView.WaitForTurnEnd();
             curPlayer.setActionState(GameEnums.ActionState.Normal);
             yield break;
         }
 
+        //TODO: addListeners
+        //Listener for Move
+        void handleSoft()
+        {
+            print("Handle Soft Triggered");
+            int BASE_COUNT = 1;
+            int extraDiceUsed = 0; //TODO: Get the value from somewhere
+            int dicesToUsed = BASE_COUNT + extraDiceUsed;
+
+            for(int i = 0; i < extraDiceUsed; i++)
+            {
+                curPlayer.getInventory().removeItemByName("Dice");
+            }
+
+            int[] baseRoles = GameModel.rollD6Dices(dicesToUsed);
+            int rollTotal = GameModel.totalFromDiceRolls(baseRoles);
+            //TODO: Set Text in View
+            GameView.setTxtRolls(baseRoles, rollTotal);
+            
+            void handleRollResult()
+            {
+                print("Player wants to continue");
+                GameView.OnRollResultContinueEvent -= handleRollResult;
+            }
+
+            GameView.OnRollResultContinueEvent += handleRollResult;
+            GameView.showRollResult();
+        }
+        void handleLoudShort()
+        {
+            //TODO: Copy paste from above
+        }
+        void handleLoudLong()
+        {
+            //TODO: Copy paste from above
+        }
+
+        GameView.OnSoftPressedEvent         += handleSoft;
+        GameView.OnLoudShortPressedEvent    += handleLoudShort;
+        GameView.OnLoudLongPressedEvent     += handleLoudLong;
+
+        
         GameView.DisplayMainChoice();
-        //TODO: Wait for turn end
         yield return GameView.WaitForTurnEnd();
+        
+        GameView.OnSoftPressedEvent         -= handleSoft;
+        GameView.OnLoudShortPressedEvent    -= handleLoudShort;
+        GameView.OnLoudLongPressedEvent     -= handleLoudLong;
     }
 
     private IEnumerator GameLoop()
@@ -35,7 +79,6 @@ public class GameMain : MonoBehaviour
         //Initialize
         int nTotalPlrs = 2; //TODO: Change this
         GameModel.setTotalPlayers(nTotalPlrs);
-        GameModel.setPlayers(new Player[nTotalPlrs]);
 
         //Game Start
         //TODO: Let Players scan roles
@@ -52,6 +95,7 @@ public class GameMain : MonoBehaviour
 
     private void Start()
     {
+        print("GameMain is running...");
         StartCoroutine(GameLoop());
     }
 }
