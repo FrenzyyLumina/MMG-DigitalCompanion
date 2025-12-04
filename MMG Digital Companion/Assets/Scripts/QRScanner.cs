@@ -78,7 +78,17 @@ public class QRScanner : MonoBehaviour
     {
         try
         {
-            IBarcodeReader barcodeReader = new BarcodeReader();
+            // Configure BarcodeReader specifically for QR codes
+            IBarcodeReader barcodeReader = new BarcodeReader
+            {
+                AutoRotate = true,
+                Options = new ZXing.Common.DecodingOptions
+                {
+                    TryHarder = true,
+                    PossibleFormats = new List<BarcodeFormat> { BarcodeFormat.QR_CODE }
+                }
+            };
+            
             Result result = barcodeReader.Decode(_camTexture.GetPixels32(), _camTexture.width, _camTexture.height);
             if (result != null)
             {
@@ -87,12 +97,13 @@ public class QRScanner : MonoBehaviour
             }
             else
             {
-                _textResult.text = "FAILED TO READ CODE!";
+                _textResult.text = "FAILED TO READ QR CODE!";
             }
         }
-        catch
+        catch (System.Exception e)
         {
-            _textResult.text = "FAIL!";
+            _textResult.text = "SCAN FAILED!";
+            Debug.LogError("QR Scan Error: " + e.Message);
         }
     }
 
