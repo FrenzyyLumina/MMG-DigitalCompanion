@@ -5,14 +5,8 @@ using UnityEngine;
 
 public class GameMain : MonoBehaviour
 {
-    private Player[] Players;
-    private int TotalPlayers;
-    private int CurrentPlayerIdx = 0;
-    private int CurrentTurn = 1;
-    private Player winner;
-
-    //Rolls numDice amount of d6
-    private int[] rollD6Dices(int numDice)
+    //Helper Functions
+    private void handleCqcTarget(int targetIdx)
     {
         GameView.OnPlayerTargetedEvent -= handleCqcTarget;
         print($"CQC Chosen: {targetIdx}");
@@ -127,15 +121,18 @@ public class GameMain : MonoBehaviour
     private IEnumerator GameLoop()
     {
         // Get player data from GameManager
-        TotalPlayers = GameManager.Instance.TotalPlayers;
-        
+        //TotalPlayers = GameManager.Instance.TotalPlayers;
+        int totalPlayers = GameManager.Instance.TotalPlayers;
+        GameModel.setTotalPlayers(totalPlayers);
+
         //Initialize
-        this.Players = new Player[this.TotalPlayers];
-        for (int i = 0; i < this.TotalPlayers; i++)
+        //this.Players = new Player[this.TotalPlayers];
+        Player[] players = GameModel.getPlayers();
+        for (int i = 0; i < totalPlayers; i++)
         {
-            this.Players[i] = new Player();
+            //this.Players[i] = new Player();
             // Set the role from the scanned QR codes
-            this.Players[i].setRole(GameManager.Instance.PlayerRoles[i]);
+            players[i].setRole(GameManager.Instance.PlayerRoles[i]);
             Debug.Log($"Player {i + 1} initialized with role: {GameManager.Instance.PlayerRoles[i]}");
         }
 
@@ -154,6 +151,8 @@ public class GameMain : MonoBehaviour
 
         print("We have a winner!!");
         print($"Player who won: {GameModel.getCurrentPlrIdx() + 1}");
+        GameView.setTxtWinner(GameModel.getCurrentPlrIdx() + 1);
+        GameView.DisplayWinner();
     }
 
     private void Start()
