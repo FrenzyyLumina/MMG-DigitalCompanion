@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Item : MonoBehaviour
+public class Item
 {
     private readonly string itemName;
     private readonly GameEnums.ItemUseType itemUseType;
