@@ -50,7 +50,6 @@ public static class GameEnums
     public enum SquareType
     {
         Empty,
-        Room,
         Objective,
         Snitching,
         Armory,
