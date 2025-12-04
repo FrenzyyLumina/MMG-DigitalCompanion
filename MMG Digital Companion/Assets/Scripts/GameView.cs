@@ -8,18 +8,26 @@ using UnityEngine.UI;
 
 public class GameView : MonoBehaviour
 {
-    [SerializeField] static GameObject txtTurnCount;
-    [SerializeField] static GameObject SwingPanel;
+    [SerializeField] GameObject _txtTurnCount;
+    [SerializeField] GameObject _SwingPanel;
+    [SerializeField] GameObject _containerMainChoice;
+    [SerializeField] GameObject _containerMoveChoice;
+    [SerializeField] GameObject _containerTargetChoice;
+    [SerializeField] GameObject _containerBinaryChoice;
+    [SerializeField] GameObject _txtBinaryPrompt;
+    [SerializeField] Button _butSkipTurn;
+    [SerializeField] Button _butRollResult;
 
-    [SerializeField] static GameObject containerMainChoice;
-    [SerializeField] static GameObject containerMoveChoice;
-    [SerializeField] static GameObject containerTargetChoice;
-    [SerializeField] static GameObject containerBinaryChoice;
-    [SerializeField] static GameObject txtBinaryPrompt;
-    [SerializeField] static Button butSkipTurn;
-    [SerializeField] static Button butRollResult;
+    private static GameObject txtTurnCount;
+    private static GameObject SwingPanel;
+    private static GameObject containerMainChoice;
+    private static GameObject containerMoveChoice;
+    private static GameObject containerTargetChoice;
+    private static GameObject containerBinaryChoice;
+    private static GameObject txtBinaryPrompt;
+    private static Button butSkipTurn;
+    private static Button butRollResult;
 
-    //private static bool turnEnded = false;
     private static event Action OnAnyTurnEnd;
 
     public static event Action OnMovePressedEvent;
@@ -33,7 +41,19 @@ public class GameView : MonoBehaviour
     public static event Action<bool> OnBinaryChoiceEvent; // true for Yes, false for No
     public static event Action OnRollResultContinueEvent;
 
-
+    private void Awake()
+    {
+        // Copy non-static references to static fields
+        txtTurnCount            = _txtTurnCount;
+        SwingPanel              = _SwingPanel;
+        containerMainChoice     = _containerMainChoice;
+        containerMoveChoice     = _containerMoveChoice;
+        containerTargetChoice   = _containerTargetChoice;
+        containerBinaryChoice   = _containerBinaryChoice;
+        txtBinaryPrompt         = _txtBinaryPrompt;
+        butSkipTurn             = _butSkipTurn;
+        butRollResult           = _butRollResult;
+    }
 
     // Basic Features
     public static void SetTurnCount(int turnCount)
