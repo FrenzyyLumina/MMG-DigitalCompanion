@@ -54,6 +54,7 @@ public static class GameEnums
         Snitching,
         Armory,
         McGuffin,
+        Spawn,
         Trap,
     }
 }
