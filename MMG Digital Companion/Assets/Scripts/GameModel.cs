@@ -30,6 +30,10 @@ public class GameModel : MonoBehaviour
             Players[i] = new Player();
         }
     }
+    public static int getCurrentPlrIdx()
+    {
+        return CurrentPlayerIdx;
+    }
     public static int getCurrentTurn()
     {
         return CurrentTurn;
