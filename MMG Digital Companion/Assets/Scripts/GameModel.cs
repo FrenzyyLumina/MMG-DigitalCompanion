@@ -10,6 +10,7 @@ public class GameModel : MonoBehaviour
     private static int CurrentPlayerIdx = 0;
     private static int CurrentTurn = 1;
     private static Player winner;
+    private static GameEnums.Movement curMovement;
 
     // Getters and Setters
     public static Player[] getPlayers()
@@ -57,6 +58,14 @@ public class GameModel : MonoBehaviour
         }
 
         return -1;
+    }
+    public static GameEnums.Movement getMovement()
+    {
+        return curMovement;
+    }
+    public static void setMovement(GameEnums.Movement newMovement)
+    {
+        curMovement = newMovement;
     }
 
     //Handles turns
@@ -118,5 +127,25 @@ public class GameModel : MonoBehaviour
         }
 
         return false;
+    }
+    public static void damagePlayer(int plrIdx)
+    {
+        Player targetPlr = getPlayerByIdx(plrIdx);
+        GameEnums.HealthState curState = targetPlr.getHealthState();
+
+        switch (curState)
+        {
+            case GameEnums.HealthState.Normal:
+                targetPlr.setState(GameEnums.HealthState.Wounded);
+                break;
+
+            case GameEnums.HealthState.Wounded:
+                targetPlr.setState(GameEnums.HealthState.Dead);
+                break;
+            default:
+                print($"Invalid Case: targetted a player with state: {curState}");
+                break;
+
+        }
     }
 }
