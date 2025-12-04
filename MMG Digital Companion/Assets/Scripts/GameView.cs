@@ -76,13 +76,11 @@ public class GameView : MonoBehaviour
     }
     public static void SetBinaryPrompt(string prompt)
     {
-        //txtBinaryPrompt.GetComponentInChildren<UnityEngine.UI.Text>().text = prompt;
-        //txtBinaryPrompt.text = prompt;
         txtBinaryPrompt.GetComponent<TMP_Text>().text = prompt;
     }
-    public static void setTxtWinner(int plrIdx)
+    public static void setTxtWinner(int plrNumber)
     {
-        txtWinner.text = $"Player: {plrIdx + 1}";
+        txtWinner.text = $"Player: {plrNumber}";
     }
     public static void setTxtRolls(int[] rolls, int total)
     {
