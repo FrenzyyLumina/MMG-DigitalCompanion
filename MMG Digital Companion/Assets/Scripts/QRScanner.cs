@@ -115,7 +115,7 @@ public class QRScanner : MonoBehaviour
         // Convert QR content to role (case-insensitive)
         string content = qrContent.Trim().ToLower();
         
-        if (content.Contains("gent"))
+        if (content.Contains("gent") && !content.Contains("agent"))
         {
             scannedRole = GameEnums.Role.Gent;
         }
@@ -126,6 +126,10 @@ public class QRScanner : MonoBehaviour
         else if (content.Contains("thief"))
         {
             scannedRole = GameEnums.Role.Thief;
+        }
+        else if (content.Contains("double") || content.Contains("agent"))
+        {
+            scannedRole = GameEnums.Role.Double_Agent;
         }
         else
         {
