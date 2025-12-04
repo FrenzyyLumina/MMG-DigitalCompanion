@@ -206,8 +206,9 @@ public class GameView : MonoBehaviour
         TMP_Text txtTotalResult = butRollResult.transform.Find("txtTotalResult")?.GetComponent<TMP_Text>();
 
         string rollsText = string.Join(", ", rolls);
-        txtDiceRollResult.text = string.Format("Dice Rolls: %s", rollsText);
-        txtTotalResult.text = string.Format("Total: %d", total);
+        txtDiceRollResult.text = $"Dice Rolls: {rollsText}";
+        txtTotalResult.text = $"Total: {total}";
+
     }
     public static void showRollResult()
     {
