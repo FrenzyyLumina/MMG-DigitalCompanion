@@ -9,6 +9,8 @@ public class MainMenuView : MonoBehaviour
 {
     [SerializeField] private GameObject SidePanel;
     [SerializeField] private GameObject containerOptions;
+    [SerializeField] private GameObject titleText;
+    [SerializeField] private GameObject creditsText;
     
     private Image coverImage;
 
@@ -34,6 +36,14 @@ public class MainMenuView : MonoBehaviour
         {
             coverImage.enabled = false;
         }
+        if (titleText != null)
+        {
+            titleText.SetActive(false);
+        }
+        if (creditsText != null)
+        {
+            creditsText.SetActive(false);
+        }
     }
 
     public void OnBackOptionsPressed()
@@ -43,6 +53,14 @@ public class MainMenuView : MonoBehaviour
         if (coverImage != null)
         {
             coverImage.enabled = true;
+        }
+        if (titleText != null)
+        {
+            titleText.SetActive(true);
+        }
+        if (creditsText != null)
+        {
+            creditsText.SetActive(true);
         }
     }
 
