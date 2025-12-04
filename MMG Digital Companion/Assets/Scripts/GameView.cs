@@ -92,6 +92,37 @@ public class GameView : MonoBehaviour
         txtTotalResult.text = $"Total: {total}";
 
     }
+    public static void updateSwingPanel(Player[] players)
+    {
+        Transform[] plrPanels = new Transform[4];
+        plrPanels[0] = SwingPanel.transform.Find("Player_1");
+        plrPanels[1] = SwingPanel.transform.Find("Player_2");
+        plrPanels[2] = SwingPanel.transform.Find("Player_3");
+        plrPanels[3] = SwingPanel.transform.Find("Player_4");
+
+        for (int i = 0; i < plrPanels.Length; i++)
+        {
+            Transform curPanel = plrPanels[i];
+
+            if (i >= players.Length)
+            {
+                curPanel.gameObject.SetActive(false);
+                continue;
+            }
+
+            curPanel.gameObject.SetActive(true);
+            TMP_Text txtPlr     = curPanel.transform.Find("txtPlayer").GetComponent<TMP_Text>();
+            TMP_Text txtRole    = curPanel.transform.Find("txtRole").GetComponent<TMP_Text>();
+            TMP_Text txtHealth  = curPanel.transform.Find("txtHealth").GetComponent<TMP_Text>();
+            TMP_Text txtStatus  = curPanel.transform.Find("txtStatus").GetComponent<TMP_Text>();
+            
+            Player curPlr = players[i];
+            txtPlr.text = $"Player {i + 1}";
+            txtRole.text = $"{curPlr.getPlayerRole()}";
+            txtHealth.text = $"{curPlr.getHealthState()}";
+            txtStatus.text = $"{curPlr.getActionState()}";
+        }
+    }
     
     //Display methods
     public static void DisplayMainChoice()
