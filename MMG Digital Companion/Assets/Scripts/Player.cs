@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Player
 {
-    private GameEnums.HealthState   state;
+    private GameEnums.HealthState   healthState;
     private GameEnums.Role role;
     private GameEnums.ActionState   action;
 
@@ -13,7 +13,7 @@ public class Player
 
     public Player(/*GameEnums.Role role*/)
     {
-        this.state = GameEnums.HealthState.Normal;
+        this.healthState = GameEnums.HealthState.Normal;
         //this.role = role;
         this.action = GameEnums.ActionState.Normal;
         
@@ -23,7 +23,7 @@ public class Player
 
     public GameEnums.HealthState getHealthState()
     {
-        return this.state;
+        return this.healthState;
     }
     public GameEnums.Role getPlayerRole()
     {
@@ -50,7 +50,7 @@ public class Player
 
     public void setState(GameEnums.HealthState state)
     {
-        this.state = state;
+        this.healthState = state;
     }
 
     public void setRole(GameEnums.Role role)
