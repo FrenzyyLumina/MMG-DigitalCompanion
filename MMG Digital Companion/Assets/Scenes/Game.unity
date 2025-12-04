@@ -4990,6 +4990,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 762c7b0f106ba17419cd314395f3bad1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _SwingPanel: {fileID: 1027047832}
+  _containerMainChoice: {fileID: 1971494758}
+  _containerMoveChoice: {fileID: 1129430484}
+  _containerTargetChoice: {fileID: 314531060}
+  _containerBinaryChoice: {fileID: 223104953}
+  _txtTurnCount: {fileID: 280372551}
+  _txtBinaryPrompt: {fileID: 608206036}
+  _butSkipTurn: {fileID: 913654565}
+  _butRollResult: {fileID: 38665354}
 --- !u!4 &1083791923
 Transform:
   m_ObjectHideFlags: 0
