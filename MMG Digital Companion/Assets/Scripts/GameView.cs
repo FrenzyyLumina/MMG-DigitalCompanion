@@ -216,6 +216,7 @@ public class GameView : MonoBehaviour
     }
     public static void OnRollResultPressed()
     {
+        print("Roll Result Pressed (View)");
         butRollResult.gameObject.SetActive(false);
         OnRollResultContinueEvent?.Invoke();
     }
