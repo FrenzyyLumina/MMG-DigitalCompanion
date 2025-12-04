@@ -18,7 +18,8 @@ public class GameView : MonoBehaviour
     [SerializeField] static GameObject txtBinaryPrompt;
     [SerializeField] static Button butSkipTurn;
 
-    private static bool turnEnded = false;
+    //private static bool turnEnded = false;
+    private static event Action OnAnyTurnEnd;
 
     // Basic Features
     public static void SetTurnCount(int turnCount)
@@ -64,16 +65,19 @@ public class GameView : MonoBehaviour
     }
     public static void OnTurnEnd()
     {
-        turnEnded = true;
+        //turnEnded = true;
+        OnAnyTurnEnd?.Invoke();
     }
 
-    IEnumerator WaitForTurnEnd()
+    public static IEnumerator WaitForTurnEnd()
     {
-        turnEnded = false;
+        bool turnEnded = false;
 
-        //TODO: Add more button detections
-        butSkipTurn.onClick.AddListener(() =>  turnEnded = true);
+        void Handler() => turnEnded = true;
+        OnAnyTurnEnd += Handler;
+
         yield return new WaitUntil(() => turnEnded);
+        OnAnyTurnEnd -= Handler;
     }
     
 
