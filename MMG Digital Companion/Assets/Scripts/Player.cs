@@ -5,7 +5,7 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     private GameEnums.HealthState   state;
-    private readonly GameEnums.Role role;
+    private GameEnums.Role role;
     private GameEnums.ActionState   action;
 
     private readonly Inventory inventory;
@@ -42,7 +42,7 @@ public class Player : MonoBehaviour
 
     public void setRole(GameEnums.Role role)
     {
-        this.role = role
+        this.role = role;
     }
 
     public void setActionState(GameEnums.ActionState action)
