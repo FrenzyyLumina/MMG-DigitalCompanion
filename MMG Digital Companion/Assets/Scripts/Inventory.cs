@@ -19,7 +19,7 @@ public class Inventory
     {
         foreach (Item item in inventory)
         {
-            if (item.name == name)
+            if (item.getItemName() == name)
             {
                 return item;
             }
@@ -29,7 +29,7 @@ public class Inventory
     }
     public void addItem(Item item)
     {
-        Item exist = this.findItemByName(item.name);
+        Item exist = this.findItemByName(item.getItemName());
         if (exist != null)
         {
             exist.incCount();
@@ -44,7 +44,7 @@ public class Inventory
         Item exist = this.findItemByName(name);
         if (exist == null)
         {
-            print("No Item Found");
+            Debug.Log("No Item Found");
             return;
         }
 
@@ -54,6 +54,6 @@ public class Inventory
     }
     public void removeItem(Item item)
     {
-        this.removeItemByName(item.name);
+        this.removeItemByName(item.getItemName());
     }
 }
