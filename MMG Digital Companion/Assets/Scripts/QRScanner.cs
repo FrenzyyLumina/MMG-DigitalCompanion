@@ -86,6 +86,13 @@ public class QRScanner : MonoBehaviour
 
     private void SetUpCamera()
     {
+        // Wire up End Scan button listener for item scanning mode
+        if (_endScanButton != null)
+        {
+            _endScanButton.onClick.RemoveAllListeners();
+            _endScanButton.onClick.AddListener(OnEndScanPressed);
+        }
+        
         if (_textResult == null)
         {
             Debug.LogError("_textResult is not assigned in Inspector!");
@@ -148,7 +155,6 @@ public class QRScanner : MonoBehaviour
             if (_endScanButton != null)
             {
                 _endScanButton.GetComponentInChildren<TextMeshProUGUI>().text = "End Scan";
-                _endScanButton.onClick.AddListener(OnEndScanPressed);
             }
         }
         else

@@ -13,6 +13,11 @@ public class GameMain : MonoBehaviour
         GameView.showTrapPrompt();
     }
 
+    private void HandleItemScanningStart()
+    {
+        StartCoroutine(HandleItemScanningRound());
+    }
+
     private IEnumerator HandleItemScanningRound()
     {
         // Start item scanning for each player
@@ -222,6 +227,7 @@ public class GameMain : MonoBehaviour
         //Roles already scanned in GameStart scene
         
         GameView.OnTrapSpawnRerollEvent += handleRerollTrapPrompt;
+        GameView.OnTrapSpawnContinueEvent += HandleItemScanningStart;
         GameView.OnSnitchEvent += handleOnSnitch;
         GameView.OnCompleteObjectivePressedEvent += handleOnCompleteObjective;
 
@@ -239,9 +245,6 @@ public class GameMain : MonoBehaviour
             {   
                 // Spawn trap at random position
                 handleRerollTrapPrompt();
-                
-                // Start item scanning for all players
-                yield return StartCoroutine(HandleItemScanningRound());
             }
 
             GameModel.moveToNextPlayer();
@@ -256,6 +259,7 @@ public class GameMain : MonoBehaviour
         GameView.DisplayWinner();
 
         GameView.OnTrapSpawnRerollEvent -= handleRerollTrapPrompt;
+        GameView.OnTrapSpawnContinueEvent -= HandleItemScanningStart;
         GameView.OnSnitchEvent -= handleOnSnitch;
         GameView.OnCompleteObjectivePressedEvent -= handleOnCompleteObjective;
     }
