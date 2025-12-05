@@ -4,6 +4,7 @@ using Unity.VisualScripting;
 // using UnityEditor.Rendering.LookDev; -- commented due to compiler error (unused import)
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class MainMenuView : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class MainMenuView : MonoBehaviour
     [SerializeField] private GameObject containerOptions;
     [SerializeField] private GameObject titleText;
     [SerializeField] private GameObject creditsText;
+    [SerializeField] private TextMeshProUGUI playerCountIndicator;
     
     private Image coverImage;
 
@@ -25,6 +27,18 @@ public class MainMenuView : MonoBehaviour
         else
         {
             Debug.LogWarning("CoverImage GameObject not found!");
+        }
+        
+        UpdatePlayerCountIndicator();
+    }
+
+    void UpdatePlayerCountIndicator()
+    {
+        if (playerCountIndicator != null && GameManager.Instance != null)
+        {
+            int playerCount = GameManager.Instance.TotalPlayers;
+            if (playerCount == 0) playerCount = 2; // Default
+            playerCountIndicator.text = $"{playerCount} Players";
         }
     }
 
@@ -68,21 +82,24 @@ public class MainMenuView : MonoBehaviour
     {
         print("Two Player Pressed");
         GameManager.Instance.SetPlayerCount(2);
-        GameManager.Instance.StartGameStartScene();
+        Debug.Log($"Player count set to: {GameManager.Instance.TotalPlayers}");
+        UpdatePlayerCountIndicator();
     }
 
     public void OnThreePlayerPressed()
     {
         print("Three Player Pressed");
         GameManager.Instance.SetPlayerCount(3);
-        GameManager.Instance.StartGameStartScene();
+        Debug.Log($"Player count set to: {GameManager.Instance.TotalPlayers}");
+        UpdatePlayerCountIndicator();
     }
 
     public void OnFourPlayerPressed()
     {
         print("Four Player Pressed");
         GameManager.Instance.SetPlayerCount(4);
-        GameManager.Instance.StartGameStartScene();
+        Debug.Log($"Player count set to: {GameManager.Instance.TotalPlayers}");
+        UpdatePlayerCountIndicator();
     }
 
     public void OnStartPressed()

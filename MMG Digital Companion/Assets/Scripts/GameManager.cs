@@ -7,7 +7,13 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
-    public int TotalPlayers { get; set; } = 2;
+    private int totalPlayers = 2;
+    public int TotalPlayers 
+    { 
+        get { return totalPlayers; }
+        set { totalPlayers = value; }
+    }
+    
     public int CurrentScanningPlayer { get; set; } = 0;
     public GameEnums.Role[] PlayerRoles { get; private set; }
     
