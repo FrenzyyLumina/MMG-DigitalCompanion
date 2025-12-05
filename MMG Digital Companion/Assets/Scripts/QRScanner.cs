@@ -30,6 +30,7 @@ public class QRScanner : MonoBehaviour
     {
         _previousOrientation = Screen.orientation;
         Screen.orientation = ScreenOrientation.Portrait;
+        GameManager.OnNextPlayerItemScan += OnNextPlayerItemScan;
         RequestCameraPermission();
     }
     
@@ -391,6 +392,22 @@ public class QRScanner : MonoBehaviour
         if (_camTexture != null && _camTexture.isPlaying)
         {
             _camTexture.Stop();
+        }
+        
+        GameManager.OnNextPlayerItemScan -= OnNextPlayerItemScan;
+    }
+    
+    private void OnNextPlayerItemScan()
+    {
+        Debug.Log("Resetting QR Scanner for next player");
+        _isScanning = false;
+        _lastScanTime = Time.time;
+        
+        if (GameManager.Instance != null)
+        {
+            int playerNum = GameManager.Instance.CurrentScanningPlayer + 1;
+            int totalPlayers = GameManager.Instance.TotalPlayers;
+            _textResult.text = $"Player {playerNum}/{totalPlayers}\nScan item cards...";
         }
     }
 }

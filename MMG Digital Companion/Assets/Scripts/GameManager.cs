@@ -2,10 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
+    
+    public static event Action OnNextPlayerItemScan;
 
     private int totalPlayers = 2;
     public int TotalPlayers 
@@ -27,7 +30,7 @@ public class GameManager : MonoBehaviour
     
     // Item scanning mode
     public bool IsItemScanningMode { get; set; } = false;
-    public List<GameEnums.Item> ScannedItems { get; private set; }
+    public List<GameEnums.Item> ScannedItems { get; set; }
     
     private void Awake()
     {
@@ -123,16 +126,31 @@ public class GameManager : MonoBehaviour
         
         foreach (GameEnums.Item itemType in ScannedItems)
         {
-            Item newItem = new Item(itemType, GameEnums.ItemUseType.TurnUsable); // Default use type
+            Item newItem = new Item(itemType, GameEnums.ItemUseType.TurnUsable);
             inventory.addItem(newItem);
             Debug.Log($"Added {itemType} to Player {CurrentScanningPlayer + 1}'s inventory");
         }
         
-        // Reset item scanning mode
-        IsItemScanningMode = false;
+        // Reset item scanning mode for this player
         ScannedItems.Clear();
         
-        // Return to GameStart scene to continue item scanning loop
-        SceneManager.LoadScene("GameStart");
+        // Move to next player
+        CurrentScanningPlayer++;
+        
+        // Check if there are more players to scan
+        if (CurrentScanningPlayer < TotalPlayers)
+        {
+            // More players to scan - reset items list and stay in QRScanner
+            ScannedItems = new List<GameEnums.Item>();
+            Debug.Log($"Moving to Player {CurrentScanningPlayer + 1}");
+            OnNextPlayerItemScan?.Invoke();
+        }
+        else
+        {
+            // All players done scanning - return to Game scene
+            IsItemScanningMode = false;
+            Debug.Log("All players finished item scanning - returning to Game");
+            SceneManager.LoadScene("Game");
+        }
     }
 }
