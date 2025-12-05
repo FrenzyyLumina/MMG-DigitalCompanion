@@ -18,6 +18,7 @@ public class GameModel : MonoBehaviour
     private static Square[,] Board;
     private static int numObjectivesDone;
     private static int SnitchValue;
+    private static Inventory itemsUsed;
 
     private const int BOARD_SIZE = 6;
     private const int NUM_ROOMS = 7;
@@ -72,6 +73,7 @@ public class GameModel : MonoBehaviour
         winner = null;
         numObjectivesDone = 0;
         SnitchValue = Random.Range(14, 19);
+        itemsUsed = new Inventory();
 
         //-2 = Space occupied by mcguffin, -1 = room, 0 = free space, 1 = trap
         Board = new Square[BOARD_SIZE, BOARD_SIZE];
@@ -249,6 +251,16 @@ public class GameModel : MonoBehaviour
 
             case GameEnums.HealthState.Wounded:
                 targetPlr.setState(GameEnums.HealthState.Dead);
+
+                //Item: Revival Pill
+                Inventory inv = targetPlr.getInventory();
+                if (inv.findItemByItemType(GameEnums.Item.Revival_Pill) == null)
+                    break;
+
+                inv.removeItemByItemType(GameEnums.Item.Revival_Pill);
+                targetPlr.setState(GameEnums.HealthState.Normal);
+                targetPlr.setActionState(GameEnums.ActionState.Normal);
+
                 break;
             default:
                 print($"Invalid Case: targetted a player with state: {curState}");
@@ -296,5 +308,9 @@ public class GameModel : MonoBehaviour
     public static bool hasCompletedAllObjectives()
     {
         return numObjectivesDone == NUM_OBJECTIVES;
+    }
+    public static Inventory getItemUsedInv()
+    {
+        return itemsUsed;
     }
 }
