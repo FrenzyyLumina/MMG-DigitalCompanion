@@ -66,4 +66,73 @@ public class Player
     {
         this.action = action;
     }
+
+    // Role Ability Methods
+    
+    // The Gent: Can reroll if both loud dice show same value
+    public bool CanGentReroll(int[] loudRolls)
+    {
+        if (role != GameEnums.Role.Gent || loudRolls.Length != 2) return false;
+        return loudRolls[0] == loudRolls[1];
+    }
+
+    // The Soldier: +3 to CQC, cannot sneak attack
+    public int GetCQCModifier()
+    {
+        if (role == GameEnums.Role.Soldier) return 3;
+        if (role == GameEnums.Role.Thief) return -3;
+        return 0;
+    }
+
+    public bool CanSneakAttack()
+    {
+        if (role == GameEnums.Role.Soldier) return false;
+        if (role == GameEnums.Role.Double_Agent && isRoleRevealed) return false;
+        return true;
+    }
+
+    // The Assassin: +3 to quiet rolls, -3 to loud rolls, cannot initiate CQC, +2 item range
+    public int GetMovementModifier(GameEnums.Movement movement)
+    {
+        if (role == GameEnums.Role.Assassin)
+        {
+            if (movement == GameEnums.Movement.Soft) return 3;
+            if (movement == GameEnums.Movement.Loud) return -3;
+        }
+        return 0;
+    }
+
+    public bool CanInitiateCQC()
+    {
+        if (role == GameEnums.Role.Assassin) return false;
+        return true;
+    }
+
+    public int GetItemRangeBonus()
+    {
+        if (role == GameEnums.Role.Assassin) return 2;
+        return 0;
+    }
+
+    // The Vengeful: Instant objective completion
+    public bool CanInstantCompleteObjective()
+    {
+        return role == GameEnums.Role.Vengeful;
+    }
+
+    // The Double Agent: See all roles when it's their turn
+    public bool CanSeeAllRoles()
+    {
+        return role == GameEnums.Role.Double_Agent;
+    }
+
+    public void RevealRole()
+    {
+        isRoleRevealed = true;
+    }
+
+    public bool IsRoleRevealed()
+    {
+        return isRoleRevealed;
+    }
 }
