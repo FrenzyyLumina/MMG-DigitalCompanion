@@ -16,22 +16,20 @@ public class QRScanner : MonoBehaviour
     private TextMeshProUGUI _textResult;
     [SerializeField]
     private RectTransform _scanZone;
+    [SerializeField]
+    private Button _endScanButton;
 
     private bool _isCamAvailable;
     private WebCamTexture _camTexture;
     private bool _isScanning = false;
-    private float _scanInterval = 2.0f; // Scan every 2 seconds
+    private float _scanInterval = 2.0f;
     private float _lastScanTime = 0f;
     private ScreenOrientation _previousOrientation;
 
     void Start()
     {
-        // Save the previous orientation to restore it later
         _previousOrientation = Screen.orientation;
-        
-        // Set to portrait for QR scanning
         Screen.orientation = ScreenOrientation.Portrait;
-        
         RequestCameraPermission();
     }
     
@@ -79,7 +77,6 @@ public class QRScanner : MonoBehaviour
     {
         UpdateCameraRender();
         
-        // Auto-scan continuously when camera is available
         if (_isCamAvailable && !_isScanning && Time.time - _lastScanTime >= _scanInterval)
         {
             _lastScanTime = Time.time;
@@ -89,7 +86,6 @@ public class QRScanner : MonoBehaviour
 
     private void SetUpCamera()
     {
-        // Check if UI elements are assigned
         if (_textResult == null)
         {
             Debug.LogError("_textResult is not assigned in Inspector!");
@@ -117,7 +113,6 @@ public class QRScanner : MonoBehaviour
         
         Debug.Log($"Found {devices.Length} camera device(s)");
         
-        // Try to find back camera first, then fall back to any camera
         for(int i = 0; i < devices.Length; i++)
         {
             Debug.Log($"Camera {i}: {devices[i].name}, Front facing: {devices[i].isFrontFacing}");
@@ -129,7 +124,6 @@ public class QRScanner : MonoBehaviour
             }
         }
         
-        // If no back camera found, use first available camera
         if(_camTexture == null && devices.Length > 0)
         {
             _camTexture = new WebCamTexture(devices[0].name, Screen.width, Screen.height);
@@ -147,9 +141,22 @@ public class QRScanner : MonoBehaviour
         _camTexture.Play();
         _rawImageBG.texture = _camTexture;
         _isCamAvailable = true;
-        _textResult.text = "Point camera at QR code...";
-        _lastScanTime = Time.time;
         
+        if (GameManager.Instance != null && GameManager.Instance.IsItemScanningMode)
+        {
+            _textResult.text = "Scan item cards...\nPress 'End Scan' when done";
+            if (_endScanButton != null)
+            {
+                _endScanButton.GetComponentInChildren<TextMeshProUGUI>().text = "End Scan";
+                _endScanButton.onClick.AddListener(OnEndScanPressed);
+            }
+        }
+        else
+        {
+            _textResult.text = "Point camera at QR code...";
+        }
+        
+        _lastScanTime = Time.time;
         Debug.Log($"Camera started: {_camTexture.deviceName}, {_camTexture.width}x{_camTexture.height}");
     }
 
@@ -174,6 +181,12 @@ public class QRScanner : MonoBehaviour
 
     public void OnClickScan()
     {
+        if (GameManager.Instance != null && GameManager.Instance.IsItemScanningMode)
+        {
+            OnEndScanPressed();
+            return;
+        }
+        
         if(_isCamAvailable && !_isScanning)
         {
             _isScanning = true;
@@ -189,6 +202,21 @@ public class QRScanner : MonoBehaviour
             _textResult.text = "Camera not available!";
         }
     }
+    
+    public void OnEndScanPressed()
+    {
+        Debug.Log("End Scan pressed - finishing item scanning");
+        
+        if (_camTexture != null && _camTexture.isPlaying)
+        {
+            _camTexture.Stop();
+        }
+        
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.FinishItemScanning();
+        }
+    }
 
     private void Scan()
     {
@@ -201,7 +229,6 @@ public class QRScanner : MonoBehaviour
                 return;
             }
             
-            // Configure BarcodeReader specifically for QR codes
             IBarcodeReader barcodeReader = new BarcodeReader
             {
                 AutoRotate = true,
@@ -212,17 +239,16 @@ public class QRScanner : MonoBehaviour
                     PossibleFormats = new List<BarcodeFormat> { BarcodeFormat.QR_CODE }
                 }
             };
-            
+
             Result result = barcodeReader.Decode(_camTexture.GetPixels32(), _camTexture.width, _camTexture.height);
-            if (result != null)
+
+            if(result != null)
             {
-                _textResult.text = $"Scanned: {result.Text}";
                 Debug.Log($"QR Code detected: {result.Text}");
                 ProcessQRCode(result.Text);
             }
             else
             {
-                // No QR code found, reset scanning flag to try again
                 _isScanning = false;
             }
         }
@@ -236,42 +262,28 @@ public class QRScanner : MonoBehaviour
 
     private void ProcessQRCode(string qrContent)
     {
-        // Parse the QR code content to determine the role
-        GameEnums.Role scannedRole = GameEnums.Role.Unknown;
-
-        // Convert QR content to role (case-insensitive)
         string content = qrContent.Trim().ToLower();
-        
         Debug.Log($"Processing QR content: {content}");
         
-        if (content.Contains("the_gent") || content.Contains("gent"))
+        if (GameManager.Instance != null && GameManager.Instance.IsItemScanningMode)
         {
-            scannedRole = GameEnums.Role.Gent;
+            GameEnums.Item scannedItem = ParseItemFromQR(content);
+            if (scannedItem != GameEnums.Item.None)
+            {
+                GameManager.Instance.AddScannedItem(scannedItem);
+                _textResult.text = $"Scanned: {scannedItem}\nTotal: {GameManager.Instance.ScannedItems.Count}";
+                _isScanning = false;
+                return;
+            }
+            else
+            {
+                _textResult.text = $"Unknown item: {qrContent}";
+                _isScanning = false;
+                return;
+            }
         }
-        else if (content.Contains("the_soldier") || content.Contains("soldier"))
-        {
-            scannedRole = GameEnums.Role.Soldier;
-        }
-        else if (content.Contains("the_thief") || content.Contains("thief"))
-        {
-            scannedRole = GameEnums.Role.Thief;
-        }
-        else if (content.Contains("the_assassin") || content.Contains("assassin"))
-        {
-            scannedRole = GameEnums.Role.Assassin;
-        }
-        else if (content.Contains("the_hacker") || content.Contains("hacker"))
-        {
-            scannedRole = GameEnums.Role.Hacker;
-        }
-        else if (content.Contains("double_agent"))
-        {
-            scannedRole = GameEnums.Role.Double_Agent;
-        }
-        else if (content.Contains("the_vengeful") || content.Contains("vengeful"))
-        {
-            scannedRole = GameEnums.Role.Vengeful;
-        }
+        
+        GameEnums.Role scannedRole = ParseRoleFromQR(content);
         
         if (scannedRole == GameEnums.Role.Unknown)
         {
@@ -283,31 +295,72 @@ public class QRScanner : MonoBehaviour
 
         Debug.Log($"Role detected: {scannedRole}");
         
-        // Stop the camera
         if (_camTexture != null && _camTexture.isPlaying)
         {
             _camTexture.Stop();
         }
 
-        // Return to GameStart scene with the scanned role
         StartCoroutine(ReturnToGameStart(scannedRole));
+    }
+    
+    private GameEnums.Item ParseItemFromQR(string content)
+    {
+        // Special McGuffin item - rickroll QR code
+        if (content.Contains("dQw4w9WgXcQ")) return GameEnums.Item.McGuffin;
+        
+        if (content.Contains("dice")) return GameEnums.Item.Dice;
+        if (content.Contains("mcguffin")) return GameEnums.Item.McGuffin;
+        if (content.Contains("body_armor")) return GameEnums.Item.Body_Armor;
+        if (content.Contains("personal_radar")) return GameEnums.Item.Personal_Radar;
+        if (content.Contains("rations")) return GameEnums.Item.Rations;
+        if (content.Contains("adrenaline")) return GameEnums.Item.Adrenaline;
+        if (content.Contains("active_projectile_dome")) return GameEnums.Item.Active_Projectile_Dome;
+        if (content.Contains("revival_pill")) return GameEnums.Item.Revival_Pill;
+        if (content.Contains("hush_puppy")) return GameEnums.Item.Hush_Puppy;
+        if (content.Contains("poison_blowdart")) return GameEnums.Item.Poison_Blowdart;
+        if (content.Contains("m9_bayonet")) return GameEnums.Item.M9_Bayonet;
+        if (content.Contains("tripmine")) return GameEnums.Item.Tripmine;
+        if (content.Contains("universal_multi_tool")) return GameEnums.Item.Universal_Multi_Tool;
+        if (content.Contains("proximity_detector")) return GameEnums.Item.Proximity_Detector;
+        if (content.Contains("truth_serum")) return GameEnums.Item.Truth_Serum;
+        if (content.Contains("sneaking_suit")) return GameEnums.Item.Sneaking_Suit;
+        if (content.Contains("cardboard_box")) return GameEnums.Item.Cardboard_Box;
+        if (content.Contains("coin")) return GameEnums.Item.Coin;
+        if (content.Contains("the_doohickey")) return GameEnums.Item.The_Doohickey;
+        
+        return GameEnums.Item.None;
+    }
+    
+    private GameEnums.Role ParseRoleFromQR(string content)
+    {
+        if (content.Contains("the_gent") || content.Contains("gent"))
+            return GameEnums.Role.Gent;
+        if (content.Contains("the_soldier") || content.Contains("soldier"))
+            return GameEnums.Role.Soldier;
+        if (content.Contains("the_thief") || content.Contains("thief"))
+            return GameEnums.Role.Thief;
+        if (content.Contains("the_assassin") || content.Contains("assassin"))
+            return GameEnums.Role.Assassin;
+        if (content.Contains("the_hacker") || content.Contains("hacker"))
+            return GameEnums.Role.Hacker;
+        if (content.Contains("double_agent"))
+            return GameEnums.Role.Double_Agent;
+        if (content.Contains("the_vengeful") || content.Contains("vengeful"))
+            return GameEnums.Role.Vengeful;
+        
+        return GameEnums.Role.Unknown;
     }
 
     private IEnumerator ReturnToGameStart(GameEnums.Role role)
     {
-        // Wait a moment to show the result
         yield return new WaitForSeconds(1.5f);
-        
-        // Use GameManager to handle the transition
         GameManager.Instance.ReturnFromQRScanner(role);
     }
     
     void OnDestroy()
     {
-        // Restore the original screen orientation when leaving the scene
         Screen.orientation = _previousOrientation;
         
-        // Clean up camera when leaving scene
         if (_camTexture != null && _camTexture.isPlaying)
         {
             _camTexture.Stop();

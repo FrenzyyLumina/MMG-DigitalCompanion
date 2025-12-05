@@ -13,6 +13,26 @@ public class GameMain : MonoBehaviour
         GameView.showTrapPrompt();
     }
 
+    private IEnumerator HandleItemScanningRound()
+    {
+        // Start item scanning for each player
+        int playerCount = GameManager.Instance != null ? GameManager.Instance.TotalPlayers : 2;
+        
+        for (int playerIdx = 0; playerIdx < playerCount; playerIdx++)
+        {
+            Debug.Log($"Starting item scanning for Player {playerIdx + 1}");
+            GameManager.Instance.StartItemScanningForPlayer(playerIdx);
+            
+            // Wait until the item scanning scene returns (FinishItemScanning loads Game scene back)
+            // We'll detect this by checking if we're back in the Game scene
+            yield return new WaitUntil(() => UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "Game");
+            
+            Debug.Log($"Player {playerIdx + 1} finished item scanning");
+        }
+        
+        Debug.Log("All players completed item scanning round");
+    }
+
     private void handleTargetPostMove(int targetIdx)
     {
         GameView.OnPlayerTargetedEvent -= handleTargetPostMove;
@@ -217,8 +237,11 @@ public class GameMain : MonoBehaviour
 
             if (GameModel.getCurrentPlrIdx() == totalPlayers - 1)
             {   
-                //TODO: if it is, Give items to all players and spawn a trap
+                // Spawn trap at random position
                 handleRerollTrapPrompt();
+                
+                // Start item scanning for all players
+                yield return StartCoroutine(HandleItemScanningRound());
             }
 
             GameModel.moveToNextPlayer();
