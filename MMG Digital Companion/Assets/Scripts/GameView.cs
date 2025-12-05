@@ -16,6 +16,7 @@ public class GameView : MonoBehaviour
     [SerializeField] GameObject _containerBinaryChoice;
     [SerializeField] GameObject _panelTrapPrompt;
     [SerializeField] GameObject _panelInventory;
+    [SerializeField] GameObject _panelMoveEnd;
     [SerializeField] TMP_Text _txtTurnCount;
     [SerializeField] TMP_Text _txtCurrentPlayer;
     [SerializeField] TMP_Text _txtBinaryPrompt;
@@ -34,6 +35,7 @@ public class GameView : MonoBehaviour
     private static GameObject containerBinaryChoice;
     private static GameObject panelTrapPrompt;
     private static GameObject panelInventory;
+    private static GameObject panelMoveEnd;
     private static TMP_Text txtTurnCount;
     private static TMP_Text txtCurrentPlayer;
     private static TMP_Text txtBinaryPrompt;
@@ -61,29 +63,31 @@ public class GameView : MonoBehaviour
     public static event Action OnTrapSpawnContinueEvent;
     public static event Action OnSnitchEvent;
     public static event Action<GameEnums.Item> OnItemUsedEvent;
+    public static event Action<GameEnums.SquareType> OnMoveEndEvent;
 
     public static List<Button> AddedButtons;
 
     private void Awake()
     {
         // Copy non-static references to static fields
-        Background              = _Background;
-        SwingPanel              = _SwingPanel;
-        containerMainChoice     = _containerMainChoice;
-        containerMoveChoice     = _containerMoveChoice;
-        containerTargetChoice   = _containerTargetChoice;
-        containerBinaryChoice   = _containerBinaryChoice;
-        panelTrapPrompt         = _panelTrapPrompt;
-        panelInventory          = _panelInventory;
-        txtTurnCount            = _txtTurnCount;
-        txtCurrentPlayer        = _txtCurrentPlayer;
-        txtBinaryPrompt         = _txtBinaryPrompt;
-        txtWinner               = _txtWinner;
-        butSkipTurn             = _butSkipTurn;
-        butRollResult           = _butRollResult;
-        butWinnerResult         = _butWinnerResult;
-        butCqcResult            = _butCqcResult;
-        butItemTemplate         = _butItemTemplate;
+        Background = _Background;
+        SwingPanel = _SwingPanel;
+        containerMainChoice = _containerMainChoice;
+        containerMoveChoice = _containerMoveChoice;
+        containerTargetChoice = _containerTargetChoice;
+        containerBinaryChoice = _containerBinaryChoice;
+        panelTrapPrompt = _panelTrapPrompt;
+        panelInventory = _panelInventory;
+        panelMoveEnd = _panelMoveEnd;
+        txtTurnCount = _txtTurnCount;
+        txtCurrentPlayer = _txtCurrentPlayer;
+        txtBinaryPrompt = _txtBinaryPrompt;
+        txtWinner = _txtWinner;
+        butSkipTurn = _butSkipTurn;
+        butRollResult = _butRollResult;
+        butWinnerResult = _butWinnerResult;
+        butCqcResult = _butCqcResult;
+        butItemTemplate = _butItemTemplate;
 
         AddedButtons = new List<Button>();
     }
@@ -111,7 +115,7 @@ public class GameView : MonoBehaviour
     public static void SetCurrentPlayer(int plrNumber)
     {
         txtCurrentPlayer.text = $"Player {plrNumber}'s Turn";
-        SetBackgroundColorFromPlrNum (plrNumber);
+        SetBackgroundColorFromPlrNum(plrNumber);
     }
     public static void SetBinaryPrompt(string prompt)
     {
@@ -131,7 +135,7 @@ public class GameView : MonoBehaviour
         txtTotalResult.text = $"Total: {total}";
 
     }
-    public static void setCqcRolls(int atkrIdx, int[] atkrRolls, int atkrTotal, int atkeIdx,  int[] atkeRolls, int atkeTotal)
+    public static void setCqcRolls(int atkrIdx, int[] atkrRolls, int atkrTotal, int atkeIdx, int[] atkeRolls, int atkeTotal)
     {
         Transform attackerObj = butCqcResult.transform.Find("Attacker");
         Transform attackeeObj = butCqcResult.transform.Find("Attackee");
@@ -141,7 +145,7 @@ public class GameView : MonoBehaviour
             TMP_Text txtPlayer = obj.transform.Find("txtPlayer").GetComponent<TMP_Text>();
             TMP_Text txtDiceRollResult = obj.transform.Find("txtDiceRollResult")?.GetComponent<TMP_Text>();
             TMP_Text txtTotalResult = obj.transform.Find("txtTotalResult")?.GetComponent<TMP_Text>();
-            TMP_Text txtCqcResult = obj.transform.Find("txtCqcResult")?.GetComponent <TMP_Text>();
+            TMP_Text txtCqcResult = obj.transform.Find("txtCqcResult")?.GetComponent<TMP_Text>();
 
             txtPlayer.text = $"{prefix}\nPlayer {idx + 1}";
             string rollsText = string.Join(", ", rolls);
@@ -164,13 +168,13 @@ public class GameView : MonoBehaviour
 
         bool isTie = atkrTotal == atkeTotal;
         setInfo(attackerObj, atkrIdx, atkrRolls, atkrTotal, "Attacker",
-            isTie? GameEnums.CQCResult.Tie :
-            atkrTotal > atkeTotal? GameEnums.CQCResult.Winner :
+            isTie ? GameEnums.CQCResult.Tie :
+            atkrTotal > atkeTotal ? GameEnums.CQCResult.Winner :
             GameEnums.CQCResult.Loser
         );
         setInfo(attackeeObj, atkeIdx, atkeRolls, atkeTotal, "Attackee",
-            isTie? GameEnums.CQCResult.Tie :
-            atkeTotal > atkrTotal? GameEnums.CQCResult.Winner :
+            isTie ? GameEnums.CQCResult.Tie :
+            atkeTotal > atkrTotal ? GameEnums.CQCResult.Winner :
             GameEnums.CQCResult.Loser
         );
     }
@@ -193,11 +197,11 @@ public class GameView : MonoBehaviour
             }
 
             curPanel.gameObject.SetActive(true);
-            TMP_Text txtPlr     = curPanel.transform.Find("txtPlayer").GetComponent<TMP_Text>();
-            TMP_Text txtRole    = curPanel.transform.Find("txtRole").GetComponent<TMP_Text>();
-            TMP_Text txtHealth  = curPanel.transform.Find("txtHealth").GetComponent<TMP_Text>();
-            TMP_Text txtStatus  = curPanel.transform.Find("txtStatus").GetComponent<TMP_Text>();
-            
+            TMP_Text txtPlr = curPanel.transform.Find("txtPlayer").GetComponent<TMP_Text>();
+            TMP_Text txtRole = curPanel.transform.Find("txtRole").GetComponent<TMP_Text>();
+            TMP_Text txtHealth = curPanel.transform.Find("txtHealth").GetComponent<TMP_Text>();
+            TMP_Text txtStatus = curPanel.transform.Find("txtStatus").GetComponent<TMP_Text>();
+
             Player curPlr = players[i];
             txtPlr.text = $"Player {i + 1}";
             txtRole.text = $"{curPlr.getPlayerRole()}";
@@ -205,7 +209,7 @@ public class GameView : MonoBehaviour
             txtStatus.text = $"{curPlr.getActionState()}";
         }
     }
-    
+
     public static void setTrapCoord(int x, int y)
     {
         panelTrapPrompt.transform.Find("txtCoord").GetComponent<TMP_Text>().text = $"{(char)('a' + x)}{y + 1}";
@@ -221,14 +225,14 @@ public class GameView : MonoBehaviour
     public static void setInventory(Inventory inv)
     {
         //Remove old buttons
-        foreach(Button but in AddedButtons)
+        foreach (Button but in AddedButtons)
         {
             if (but != null)
                 Destroy(but.gameObject);
         }
         AddedButtons.Clear();
 
-        foreach(Item item in inv.getItems())
+        foreach (Item item in inv.getItems())
         {
             Button newButton = Instantiate(butItemTemplate, panelInventory.transform);
             newButton.gameObject.SetActive(true);
@@ -246,12 +250,18 @@ public class GameView : MonoBehaviour
     }
 
     //Display methods
-    public static void DisplayMainChoice()
+    private static void hideAll()
     {
-        containerMainChoice.SetActive(true);
+        containerMainChoice.SetActive(false);
         containerMoveChoice.SetActive(false);
         containerTargetChoice.SetActive(false);
         containerBinaryChoice.SetActive(false);
+        panelMoveEnd.SetActive(false);
+    }
+    public static void DisplayMainChoice()
+    {
+        hideAll();
+        containerMainChoice.SetActive(true);
     }
     public static void DisplayTargetChoiceWithoutOne(int numPlrs, int plrIdx)
     {
@@ -273,17 +283,18 @@ public class GameView : MonoBehaviour
             i++;
         }
 
-        containerMainChoice.SetActive(false);
-        containerMoveChoice.SetActive(false);
+        hideAll();
         containerTargetChoice.SetActive(true);
-        containerBinaryChoice.SetActive(false);
     }
     public static void DisplayBinaryChoice()
     {
-        containerMainChoice.SetActive(false);
-        containerMoveChoice.SetActive(false);
-        containerTargetChoice.SetActive(false);
+        hideAll();
         containerBinaryChoice.SetActive(true);
+    }
+    public static void DisplayMoveEndChoice()
+    {
+        hideAll();
+        panelMoveEnd.SetActive(true);
     }
     public static void DisplayWinner()
     {
@@ -328,7 +339,7 @@ public class GameView : MonoBehaviour
         yield return new WaitUntil(() => turnEnded);
         OnAnyTurnEnd -= Handler;
     }
-    
+
 
     // Main Choices
     public static void OnMovePressed()
@@ -443,7 +454,7 @@ public class GameView : MonoBehaviour
         butCqcResult.gameObject.SetActive(false);
         OnCqcResultContinueEvent?.Invoke();
     }
-    
+
     //Trap spawn
     public static void OnTrapSpawnReroll()
     {
@@ -453,5 +464,23 @@ public class GameView : MonoBehaviour
     {
         panelTrapPrompt.gameObject.SetActive(false);
         OnTrapSpawnContinueEvent?.Invoke();
+    }
+
+    //Landed on
+    public static void OnLandNone()
+    {
+        OnMoveEndEvent?.Invoke(GameEnums.SquareType.Empty);
+    }
+    public static void OnLandTrap()
+    {
+        OnMoveEndEvent?.Invoke(GameEnums.SquareType.Trap);
+    }
+    public static void OnLandNewRoom()
+    {
+        OnMoveEndEvent?.Invoke(GameEnums.SquareType.Room);
+    }
+    public static void OnLandMcGuffin()
+    {
+        OnMoveEndEvent?.Invoke(GameEnums.SquareType.McGuffin);
     }
 }

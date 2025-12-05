@@ -46,11 +46,11 @@ public class GameMain : MonoBehaviour
         //TODO: Modify to handle extra rolls
         int[] attackerRolls = GameModel.rollD6Dices(1);
         int[] attackeeRolls = GameModel.rollD6Dices(1);
-        
+
         // Apply role modifiers for CQC
         Player attacker = GameModel.getCurrentPlayerToAct();
         Player defender = GameModel.getPlayerByIdx(targetIdx);
-        
+
         int attackerTotal = GameModel.totalFromDiceRolls(attackerRolls) + attacker.GetCQCModifier();
         int attackeeTotal = GameModel.totalFromDiceRolls(attackeeRolls) + defender.GetCQCModifier();
 
@@ -84,12 +84,42 @@ public class GameMain : MonoBehaviour
         GameView.OnCqcResultContinueEvent += handle;
         GameView.showCqcRollResult();
     }
+    private void handleLanded(GameEnums.SquareType square)
+    {
+        GameView.OnMoveEndEvent -= handleLanded;
+        Player curPlr = GameModel.getCurrentPlayerToAct();
+
+        switch (square)
+        {
+
+            case GameEnums.SquareType.Room:
+                break;
+            
+            case GameEnums.SquareType.Trap:
+                break;
+            
+            case GameEnums.SquareType.McGuffin:
+                curPlr.getInventory().addItem(new Item(GameEnums.Item.McGuffin, GameEnums.ItemUseType.Passive));
+                goto default;
+
+            case GameEnums.SquareType.Empty:
+            default:
+                GameView.OnTurnEnd();
+                break;
+        }
+    }
     private void handlePostMoveEvent(bool yes)
     {
         GameView.OnBinaryChoiceEvent -= handlePostMoveEvent;
         print($"Choice selected: {yes}");
 
-        if (!yes) GameView.OnTurnEnd();
+        if (!yes)
+        {
+            //GameView.OnTurnEnd();
+            GameView.OnMoveEndEvent += handleLanded;
+            GameView.DisplayMoveEndChoice();
+            return;
+        }
 
         GameView.OnPlayerTargetedEvent += handleTargetPostMove;
         GameView.DisplayTargetChoiceWithoutOne(
@@ -102,7 +132,7 @@ public class GameMain : MonoBehaviour
         GameView.OnRollResultContinueEvent -= handleMoveRollResult;
 
         print("Player wants to continue");
-        GameView.SetBinaryPrompt("Did you engage CQC with another player?");
+        GameView.SetBinaryPrompt("Did you engage a battle on the same square with another player?");
 
         GameView.OnBinaryChoiceEvent += handlePostMoveEvent;
         GameView.DisplayBinaryChoice();
@@ -323,8 +353,9 @@ public class GameMain : MonoBehaviour
             yield return StartCoroutine(handleCurrentPlayer());
 
             if (GameModel.getCurrentPlrIdx() == totalPlayers - 1)
-            {   
+            {
                 // Spawn trap at random position
+                //HandleItemScanningRound();
                 handleRerollTrapPrompt();
             }
 
