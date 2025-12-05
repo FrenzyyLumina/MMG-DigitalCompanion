@@ -5,12 +5,14 @@ using UnityEngine;
 public class Item
 {
     private readonly string itemName;
+    private readonly GameEnums.Item item;
     private readonly GameEnums.ItemUseType itemUseType;
     private int count;
 
-    public Item(string name, GameEnums.ItemUseType useType)
+    public Item(GameEnums.Item item, GameEnums.ItemUseType useType)
     {
-        this.itemName = name;
+        this.itemName = item.ToString();
+        this.item = item;
         this.itemUseType = useType;
         this.count = 1;
     }
