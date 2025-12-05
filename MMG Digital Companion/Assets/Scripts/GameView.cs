@@ -15,6 +15,7 @@ public class GameView : MonoBehaviour
     [SerializeField] GameObject _containerTargetChoice;
     [SerializeField] GameObject _containerBinaryChoice;
     [SerializeField] GameObject _panelTrapPrompt;
+    [SerializeField] GameObject _panelInventory;
     [SerializeField] TMP_Text _txtTurnCount;
     [SerializeField] TMP_Text _txtCurrentPlayer;
     [SerializeField] TMP_Text _txtBinaryPrompt;
@@ -23,6 +24,7 @@ public class GameView : MonoBehaviour
     [SerializeField] Button _butRollResult;
     [SerializeField] Button _butWinnerResult;
     [SerializeField] Button _butCqcResult;
+    [SerializeField] Button _butItemTemplate;
 
     private static GameObject Background;
     private static GameObject SwingPanel;
@@ -31,6 +33,7 @@ public class GameView : MonoBehaviour
     private static GameObject containerTargetChoice;
     private static GameObject containerBinaryChoice;
     private static GameObject panelTrapPrompt;
+    private static GameObject panelInventory;
     private static TMP_Text txtTurnCount;
     private static TMP_Text txtCurrentPlayer;
     private static TMP_Text txtBinaryPrompt;
@@ -39,6 +42,7 @@ public class GameView : MonoBehaviour
     private static Button butRollResult;
     private static Button butWinnerResult;
     private static Button butCqcResult;
+    private static Button butItemTemplate;
 
     private static event Action OnAnyTurnEnd;
 
@@ -56,6 +60,8 @@ public class GameView : MonoBehaviour
     public static event Action OnTrapSpawnRerollEvent;
     public static event Action OnSnitchEvent;
 
+    public static List<Button> AddedButtons;
+
     private void Awake()
     {
         // Copy non-static references to static fields
@@ -66,6 +72,7 @@ public class GameView : MonoBehaviour
         containerTargetChoice   = _containerTargetChoice;
         containerBinaryChoice   = _containerBinaryChoice;
         panelTrapPrompt         = _panelTrapPrompt;
+        panelInventory          = _panelInventory;
         txtTurnCount            = _txtTurnCount;
         txtCurrentPlayer        = _txtCurrentPlayer;
         txtBinaryPrompt         = _txtBinaryPrompt;
@@ -74,6 +81,7 @@ public class GameView : MonoBehaviour
         butRollResult           = _butRollResult;
         butWinnerResult         = _butWinnerResult;
         butCqcResult            = _butCqcResult;
+        butItemTemplate         = _butItemTemplate;
     }
 
     // Basic Features
@@ -206,6 +214,28 @@ public class GameView : MonoBehaviour
         containerMainChoice.transform.Find("butObjective").GetComponent<Button>().interactable = state;
         containerMainChoice.transform.Find("butSnitch").GetComponent<Button>().interactable = state;
     }
+    public static void setInventory(Inventory inv)
+    {
+        //Remove old buttons
+        foreach(Button but in AddedButtons)
+        {
+            if (but != null)
+                Destroy(but);
+        }
+        AddedButtons.Clear();
+
+        foreach(Item item in inv.getItems())
+        {
+            Button newButton = Instantiate(butItemTemplate, panelInventory.transform);
+            newButton.gameObject.SetActive(true);
+
+            TMP_Text buttonTextComponent = newButton.GetComponentInChildren<TMP_Text>();
+            buttonTextComponent.text = $"x{item.getCount()}";
+            //newButton.onClick.AddListener(() => On);
+            AddedButtons.Add(newButton);
+        }
+    }
+
     //Display methods
     public static void DisplayMainChoice()
     {
