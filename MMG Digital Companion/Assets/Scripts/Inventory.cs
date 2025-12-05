@@ -51,6 +51,19 @@ public class Inventory
             this.inventory.Add(item);
         }
     }
+    public void removeItemByItemType(GameEnums.Item itemType)
+    {
+        Item exist = this.findItemByItemType(itemType);
+        if (exist == null)
+        {
+            Debug.Log("No Item Found");
+            return;
+        }
+
+        exist.decCount();
+        if (exist.getCount() == 0)
+            this.inventory.Remove(exist);
+    }
     public void removeItemByName(string name)
     {
         Item exist = this.findItemByName(name);
@@ -67,5 +80,10 @@ public class Inventory
     public void removeItem(Item item)
     {
         this.removeItemByName(item.getItemName());
+    }
+    
+    public void removeAllItems()
+    {
+        this.inventory.Clear();
     }
 }
