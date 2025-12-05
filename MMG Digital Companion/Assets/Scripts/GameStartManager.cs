@@ -13,20 +13,22 @@ public class GameStartManager : MonoBehaviour
 
     private int currentPlayerIndex = 0;
     private int totalPlayers;
-    private Player[] players;
     private bool hasDoubleAgent = false;
 
     void Start()
     {
-        // Get player count from GameManager or GameModel
+        // Get player count from GameManager
         totalPlayers = GameManager.Instance.TotalPlayers;
-        currentPlayerIndex = 0;
+        currentPlayerIndex = GameManager.Instance.CurrentScanningPlayer;
         
-        // Initialize players array (will be stored in GameModel later)
-        players = new Player[totalPlayers];
-        for (int i = 0; i < totalPlayers; i++)
+        Debug.Log($"GameStart: Starting with {totalPlayers} total players, currently on player {currentPlayerIndex + 1}");
+        
+        // Check if all players have finished scanning
+        if (currentPlayerIndex >= totalPlayers)
         {
-            players[i] = new Player();
+            Debug.Log("All players scanned, starting game!");
+            StartGame();
+            return;
         }
         
         UpdateUI();
@@ -37,7 +39,7 @@ public class GameStartManager : MonoBehaviour
     {
         if (txtCurrentPlayer != null)
         {
-            txtCurrentPlayer.text = $"Player {currentPlayerIndex + 1}";
+            txtCurrentPlayer.text = $"Player {currentPlayerIndex + 1}'s Turn";
         }
     }
 
@@ -48,7 +50,7 @@ public class GameStartManager : MonoBehaviour
             Image bgImage = Background.GetComponent<Image>();
             if (bgImage != null)
             {
-                // Cycle through colors for each player like in Game scene
+                // Cycle through colors for each player
                 Color[] playerColors = new Color[]
                 {
                     new Color(0.8f, 0.2f, 0.2f), // Red
@@ -64,61 +66,33 @@ public class GameStartManager : MonoBehaviour
 
     public void OnScanButtonPressed()
     {
+        Debug.Log($"Scan button pressed for Player {currentPlayerIndex + 1}");
         // Transition to QR Scanner scene
         GameManager.Instance.StartQRScannerScene();
     }
 
-    // Called when returning from QR Scanner
-    void OnEnable()
-    {
-        // Skip if not initialized yet (OnEnable runs before Start)
-        if (players == null || GameManager.Instance == null)
-        {
-            return;
-        }
-        
-        // Check if we just returned from scanning
-        if (currentPlayerIndex > 0 || GameManager.Instance.CurrentScanningPlayer > 0)
-        {
-            currentPlayerIndex = GameManager.Instance.CurrentScanningPlayer;
-            
-            // Update player role from GameManager
-            if (currentPlayerIndex > 0)
-            {
-                GameEnums.Role scannedRole = GameManager.Instance.PlayerRoles[currentPlayerIndex - 1];
-                players[currentPlayerIndex - 1].setRole(scannedRole);
-                
-                // Check for Double Agent
-                if (scannedRole == GameEnums.Role.Double_Agent)
-                {
-                    hasDoubleAgent = true;
-                    Debug.Log("Double Agent detected in the game!");
-                }
-            }
-            
-            // Check if all players have scanned
-            if (currentPlayerIndex >= totalPlayers)
-            {
-                // Store players in GameModel and start Game scene
-                StartGame();
-                return;
-            }
-            
-            UpdateUI();
-            SetBackgroundColor();
-        }
-    }
-
     void StartGame()
     {
-        // Transfer player data to GameModel
+        // Initialize GameModel with total players
         GameModel.setTotalPlayers(totalPlayers);
+        
+        // Transfer all player roles from GameManager to GameModel
+        Player[] players = GameModel.getPlayers();
         for (int i = 0; i < totalPlayers; i++)
         {
-            GameModel.getPlayerByIdx(i).setRole(players[i].getPlayerRole());
+            GameEnums.Role role = GameManager.Instance.PlayerRoles[i];
+            players[i].setRole(role);
+            
+            // Check for Double Agent
+            if (role == GameEnums.Role.Double_Agent)
+            {
+                hasDoubleAgent = true;
+            }
+            
+            Debug.Log($"Player {i + 1} initialized with role: {role}");
         }
         
-        // Store Double Agent flag (for later use in Game scene)
+        // Store Double Agent flag
         PlayerPrefs.SetInt("HasDoubleAgent", hasDoubleAgent ? 1 : 0);
         PlayerPrefs.Save();
         

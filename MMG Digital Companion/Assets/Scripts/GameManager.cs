@@ -75,18 +75,17 @@ public class GameManager : MonoBehaviour
 
     public void ReturnFromQRScanner(GameEnums.Role scannedRole)
     {
+        Debug.Log($"QR Scanner returned role: {scannedRole} for Player {CurrentScanningPlayer + 1}");
+        
+        // Store the scanned role
         SetPlayerRole(CurrentScanningPlayer, scannedRole);
+        
+        // Move to next player
         CurrentScanningPlayer++;
         
-        if (CurrentScanningPlayer >= TotalPlayers)
-        {
-            // All players have scanned, go to Game scene
-            StartGameScene();
-        }
-        else
-        {
-            // Return to GameStart for next player
-            SceneManager.LoadScene("GameStart");
-        }
+        Debug.Log($"Moving to player {CurrentScanningPlayer + 1}. Total players: {TotalPlayers}");
+        
+        // Always return to GameStart, which will handle transition to Game if all players scanned
+        SceneManager.LoadScene("GameStart");
     }
 }
