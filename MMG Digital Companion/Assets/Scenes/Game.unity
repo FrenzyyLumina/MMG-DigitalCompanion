@@ -982,6 +982,70 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 38665351}
   m_CullTransparentMesh: 1
+--- !u!1 &73316269
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 73316271}
+  - component: {fileID: 73316270}
+  m_Layer: 0
+  m_Name: ItemIconManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &73316270
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 73316269}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e99acd9cdcd72a744b02026fed79f4c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  diceIcon: {fileID: 21300000, guid: ff85b526ae9ebfb44b22e33e44df5e4d, type: 3}
+  mcGuffinIcon: {fileID: 21300000, guid: c7f85be2609a12345acf4256c5d278db, type: 3}
+  bodyArmorIcon: {fileID: 21300000, guid: 9dffbf2f4ae409b48a2e35d88a0d6f41, type: 3}
+  personalRadarIcon: {fileID: 21300000, guid: 309a7054088ac704988b7a5e322703f3, type: 3}
+  rationsIcon: {fileID: 21300000, guid: 6f2bafed16a26b443a51662cf30999a0, type: 3}
+  adrenalineIcon: {fileID: 21300000, guid: 36d59ab380c751940bae0a4ce1ee8a22, type: 3}
+  activeProjectileDomeIcon: {fileID: 21300000, guid: 8535fdd97ad39cd41b99f427e08e8312, type: 3}
+  revivalPillIcon: {fileID: 21300000, guid: 54b6204f4a76a444aa1c7cb8923e934e, type: 3}
+  hushPuppyIcon: {fileID: 21300000, guid: a252a1a598e0e2e438e5f772facb87ea, type: 3}
+  poisonBlowdartIcon: {fileID: 21300000, guid: b2f64cd279c7c0f43b73aedf54e622e2, type: 3}
+  m9BayonetIcon: {fileID: 21300000, guid: f357f990867e9a8499d6d6d87a83e256, type: 3}
+  tripmineIcon: {fileID: 21300000, guid: 6e0cae5c636c6274ab0c67692e0487de, type: 3}
+  universalMultiToolIcon: {fileID: 21300000, guid: dc3c29101f25852468bdc772f115e86e, type: 3}
+  proximityDetectorIcon: {fileID: 21300000, guid: 7fbe45bc43703154db9d89fff345b29b, type: 3}
+  truthSerumIcon: {fileID: 21300000, guid: 3699a2f0abb8bd4458587d6f242ac87b, type: 3}
+  sneakingSuitIcon: {fileID: 21300000, guid: 1efbf7bdc5b5edf4888df37504e73220, type: 3}
+  cardboardBoxIcon: {fileID: 21300000, guid: 495531d824161da408e4a8e0e742ff5f, type: 3}
+  coinIcon: {fileID: 21300000, guid: feea3b30b07e2e54ab05cd6628de1e56, type: 3}
+  theDoohickeyIcon: {fileID: 21300000, guid: 72444898b59fbe94b968d52eb5268d05, type: 3}
+  defaultIcon: {fileID: 21300000, guid: e799c979c8f864d4cae958d98ae2256d, type: 3}
+--- !u!4 &73316271
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 73316269}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -10}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &76804445
 GameObject:
   m_ObjectHideFlags: 0
@@ -10819,7 +10883,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Soft
+  m_text: Quiet
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -14670,4 +14734,5 @@ SceneRoots:
   - {fileID: 1083791923}
   - {fileID: 987472270}
   - {fileID: 585335717}
+  - {fileID: 73316271}
   - {fileID: 154509677}
