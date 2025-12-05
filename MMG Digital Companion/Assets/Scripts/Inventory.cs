@@ -27,6 +27,18 @@ public class Inventory
 
         return null;
     }
+    public Item findItemByItemType(GameEnums.Item itemType)
+    {
+        foreach (Item item in inventory)
+        {
+            if (item.getItemType() == itemType)
+            {
+                return item;
+            }
+        }
+
+        return null;
+    }
     public void addItem(Item item)
     {
         Item exist = this.findItemByName(item.getItemName());

@@ -21,7 +21,14 @@ public class Item
     {
         return this.itemName;
     }
-
+    public GameEnums.Item getItemType()
+    {
+        return this.item;
+    }
+    public GameEnums.ItemUseType getUseType()
+    {
+        return this.itemUseType;
+    }
     public int getCount()
     {
         return this.count;
