@@ -63,7 +63,7 @@ public static class GameEnums
         Spawn,
         Trap,
     }
-    public enum Items
+    public enum Item
     {
         None,
         Dice,
