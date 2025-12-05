@@ -233,9 +233,14 @@ public class GameView : MonoBehaviour
             Button newButton = Instantiate(butItemTemplate, panelInventory.transform);
             newButton.gameObject.SetActive(true);
 
+            GameEnums.Item itemType = item.getItemType();
+
+            Image buttonImgComponent = newButton.GetComponent<Image>();
+            buttonImgComponent.sprite = ItemIconManager.Instance.GetItemIcon(itemType);
+
             TMP_Text buttonTextComponent = newButton.GetComponentInChildren<TMP_Text>();
             buttonTextComponent.text = $"x{item.getCount()}";
-            newButton.onClick.AddListener(() => OnItemUsedEvent?.Invoke(item.getItemType()));
+            newButton.onClick.AddListener(() => OnItemUsedEvent?.Invoke(itemType));
             AddedButtons.Add(newButton);
         }
     }
