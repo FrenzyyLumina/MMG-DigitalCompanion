@@ -25,6 +25,10 @@ public class GameManager : MonoBehaviour
     public int CurrentScanningPlayer { get; set; } = 0;
     public GameEnums.Role[] PlayerRoles { get; private set; }
     
+    // Item scanning mode
+    public bool IsItemScanningMode { get; set; } = false;
+    public List<GameEnums.Item> ScannedItems { get; private set; }
+    
     private void Awake()
     {
         if (Instance == null)
@@ -88,5 +92,47 @@ public class GameManager : MonoBehaviour
         
         // Always return to GameStart, which will handle transition to Game if all players scanned
         SceneManager.LoadScene("GameStart");
+    }
+    
+    // Item scanning mode methods
+    public void StartItemScanningForPlayer(int playerIndex)
+    {
+        IsItemScanningMode = true;
+        CurrentScanningPlayer = playerIndex;
+        ScannedItems = new List<GameEnums.Item>();
+        Debug.Log($"Starting item scanning for Player {playerIndex + 1}");
+        SceneManager.LoadScene("QRScanner");
+    }
+    
+    public void AddScannedItem(GameEnums.Item item)
+    {
+        if (IsItemScanningMode)
+        {
+            ScannedItems.Add(item);
+            Debug.Log($"Item scanned: {item}. Total items: {ScannedItems.Count}");
+        }
+    }
+    
+    public void FinishItemScanning()
+    {
+        Debug.Log($"Player {CurrentScanningPlayer + 1} finished scanning {ScannedItems.Count} items");
+        
+        // Add items to player inventory
+        Player player = GameModel.getPlayerByIdx(CurrentScanningPlayer);
+        Inventory inventory = player.getInventory();
+        
+        foreach (GameEnums.Item itemType in ScannedItems)
+        {
+            Item newItem = new Item(itemType, GameEnums.ItemUseType.TurnUsable); // Default use type
+            inventory.addItem(newItem);
+            Debug.Log($"Added {itemType} to Player {CurrentScanningPlayer + 1}'s inventory");
+        }
+        
+        // Reset item scanning mode
+        IsItemScanningMode = false;
+        ScannedItems.Clear();
+        
+        // Return to Game scene
+        SceneManager.LoadScene("Game");
     }
 }
