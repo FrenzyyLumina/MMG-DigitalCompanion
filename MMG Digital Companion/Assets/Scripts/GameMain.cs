@@ -89,12 +89,12 @@ public class GameMain : MonoBehaviour
         Inventory inv = curPlayer.getInventory();
         for (int i = 0; i < extraDiceUsed; i++)
         {
-            inv.removeItemByName(GameEnums.Items.Dice.ToString());
+            inv.removeItemByName(GameEnums.Item.Dice.ToString());
         }
 
         if (isLoudShort)
         {
-            Item newDice = new Item(GameEnums.Items.Dice.ToString(), GameEnums.ItemUseType.TurnUsable);
+            Item newDice = new Item(GameEnums.Item.Dice, GameEnums.ItemUseType.TurnUsable);
             inv.addItem(newDice);
         }
 
