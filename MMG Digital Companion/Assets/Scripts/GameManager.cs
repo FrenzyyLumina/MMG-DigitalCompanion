@@ -10,8 +10,16 @@ public class GameManager : MonoBehaviour
     private int totalPlayers = 2;
     public int TotalPlayers 
     { 
-        get { return totalPlayers; }
-        set { totalPlayers = value; }
+        get 
+        { 
+            Debug.Log($"Getting TotalPlayers: {totalPlayers}");
+            return totalPlayers; 
+        }
+        set 
+        { 
+            Debug.Log($"Setting TotalPlayers from {totalPlayers} to {value}");
+            totalPlayers = value; 
+        }
     }
     
     public int CurrentScanningPlayer { get; set; } = 0;
@@ -33,9 +41,11 @@ public class GameManager : MonoBehaviour
 
     public void SetPlayerCount(int count)
     {
+        Debug.Log($"SetPlayerCount called with: {count}");
         TotalPlayers = count;
         CurrentScanningPlayer = 0;
         PlayerRoles = new GameEnums.Role[4];
+        Debug.Log($"After SetPlayerCount, TotalPlayers is: {TotalPlayers}");
     }
 
     public void SetPlayerRole(int playerIndex, GameEnums.Role role)

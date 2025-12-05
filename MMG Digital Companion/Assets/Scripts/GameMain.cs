@@ -164,8 +164,8 @@ public class GameMain : MonoBehaviour
     private IEnumerator GameLoop()
     {
         // Get player data from GameManager
-        //int totalPlayers = GameManager.Instance.TotalPlayers;
-        int totalPlayers = 3;
+        int totalPlayers = GameManager.Instance.TotalPlayers;
+        Debug.Log($"GameMain: Using {totalPlayers} players from GameManager");
         GameModel.setTotalPlayers(totalPlayers);
 
         //Initialize
