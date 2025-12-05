@@ -25,7 +25,10 @@ public static class GameEnums
         Gent,
         Soldier,
         Thief,
+        Assassin,
+        Hacker,
         Double_Agent,
+        Vengeful,
     }
 
     public enum Movement

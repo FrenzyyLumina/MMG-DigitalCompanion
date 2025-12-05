@@ -237,21 +237,33 @@ public class QRScanner : MonoBehaviour
         
         Debug.Log($"Processing QR content: {content}");
         
-        if (content.Contains("gent") && !content.Contains("agent"))
+        if (content.Contains("the_gent") || content.Contains("gent"))
         {
             scannedRole = GameEnums.Role.Gent;
         }
-        else if (content.Contains("soldier"))
+        else if (content.Contains("the_soldier") || content.Contains("soldier"))
         {
             scannedRole = GameEnums.Role.Soldier;
         }
-        else if (content.Contains("thief"))
+        else if (content.Contains("the_thief") || content.Contains("thief"))
         {
             scannedRole = GameEnums.Role.Thief;
         }
-        else if (content.Contains("double") || (content.Contains("agent") && !content.Contains("gent")))
+        else if (content.Contains("the_assassin") || content.Contains("assassin"))
+        {
+            scannedRole = GameEnums.Role.Assassin;
+        }
+        else if (content.Contains("the_hacker") || content.Contains("hacker"))
+        {
+            scannedRole = GameEnums.Role.Hacker;
+        }
+        else if (content.Contains("double_agent"))
         {
             scannedRole = GameEnums.Role.Double_Agent;
+        }
+        else if (content.Contains("the_vengeful") || content.Contains("vengeful"))
+        {
+            scannedRole = GameEnums.Role.Vengeful;
         }
         
         if (scannedRole == GameEnums.Role.Unknown)
