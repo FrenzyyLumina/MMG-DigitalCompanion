@@ -20,7 +20,7 @@ public class QRScanner : MonoBehaviour
     private bool _isCamAvailable;
     private WebCamTexture _camTexture;
     private bool _isScanning = false;
-    private float _scanInterval = 0.5f; // Scan every 0.5 seconds
+    private float _scanInterval = 2.0f; // Scan every 2 seconds
     private float _lastScanTime = 0f;
 
     void Start()
