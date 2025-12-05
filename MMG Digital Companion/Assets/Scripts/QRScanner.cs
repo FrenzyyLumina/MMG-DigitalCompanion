@@ -26,6 +26,7 @@ public class QRScanner : MonoBehaviour
     void Start()
     {
         RequestCameraPermission();
+        Screen.orientation = ScreenOrientation.Portrait;
     }
     
     void RequestCameraPermission()
