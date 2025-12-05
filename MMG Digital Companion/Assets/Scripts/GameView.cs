@@ -82,6 +82,8 @@ public class GameView : MonoBehaviour
         butWinnerResult         = _butWinnerResult;
         butCqcResult            = _butCqcResult;
         butItemTemplate         = _butItemTemplate;
+
+        AddedButtons = new List<Button>();
     }
 
     // Basic Features
@@ -220,7 +222,7 @@ public class GameView : MonoBehaviour
         foreach(Button but in AddedButtons)
         {
             if (but != null)
-                Destroy(but);
+                Destroy(but.gameObject);
         }
         AddedButtons.Clear();
 
