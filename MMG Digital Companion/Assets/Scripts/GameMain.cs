@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -21,7 +22,13 @@ public class GameMain : MonoBehaviour
         //Auto damage if soft
         if (GameModel.getMovement() == GameEnums.Movement.Soft)
         {
-            GameModel.damagePlayer(targetIdx);
+            //Item: Personal Radar
+            Inventory inv = GameModel.getPlayerByIdx(targetIdx).getInventory();
+            if (inv.findItemByItemType(GameEnums.Item.Personal_Radar) == null)
+                GameModel.damagePlayer(targetIdx);
+            else
+                inv.removeItemByItemType(GameEnums.Item.Personal_Radar);
+
             GameView.OnTurnEnd();
             return;
         }
@@ -41,11 +48,22 @@ public class GameMain : MonoBehaviour
         void handle()
         {
             GameView.OnCqcResultContinueEvent -= handle;
+            int idxToDamage = -1;
 
             if (attackerTotal > attackeeTotal)
-                GameModel.damagePlayer(targetIdx);
+                idxToDamage = targetIdx;
             else if (attackerTotal < attackeeTotal)
-                GameModel.damagePlayer(GameModel.getCurrentPlrIdx());
+                idxToDamage = GameModel.getCurrentPlrIdx();
+
+            //Item: Body Armor
+            if (idxToDamage != -1)
+            {
+                Inventory inv = GameModel.getPlayerByIdx(idxToDamage).getInventory();
+                if (inv.findItemByItemType(GameEnums.Item.Body_Armor) == null)
+                    GameModel.damagePlayer(idxToDamage);
+                else
+                    inv.removeItemByItemType(GameEnums.Item.Body_Armor);
+            }
 
             GameView.OnTurnEnd();
         }
