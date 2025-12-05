@@ -30,8 +30,13 @@ public class GameMain : MonoBehaviour
         //TODO: Modify to handle extra rolls
         int[] attackerRolls = GameModel.rollD6Dices(1);
         int[] attackeeRolls = GameModel.rollD6Dices(1);
-        int attackerTotal = GameModel.totalFromDiceRolls(attackerRolls);
-        int attackeeTotal = GameModel.totalFromDiceRolls(attackeeRolls);
+        
+        // Apply role modifiers for CQC
+        Player attacker = GameModel.getCurrentPlayerToAct();
+        Player defender = GameModel.getPlayerByIdx(targetIdx);
+        
+        int attackerTotal = GameModel.totalFromDiceRolls(attackerRolls) + attacker.GetCQCModifier();
+        int attackeeTotal = GameModel.totalFromDiceRolls(attackeeRolls) + defender.GetCQCModifier();
 
         void handle()
         {
@@ -95,6 +100,18 @@ public class GameMain : MonoBehaviour
 
         int[] baseRoles = GameModel.rollD6Dices(dicesToUsed);
         int rollTotal = GameModel.totalFromDiceRolls(baseRoles);
+        
+        // The Gent: Extra d6 if both loud dice show same value
+        if (curPlayer.CanGentReroll(baseRoles) && !isLoudShort)
+        {
+            int[] bonusRoll = GameModel.rollD6Dices(1);
+            rollTotal += bonusRoll[0];
+            Debug.Log($"The Gent bonus roll: {bonusRoll[0]}. New total: {rollTotal}");
+        }
+        
+        // Apply movement modifiers (Assassin)
+        rollTotal += curPlayer.GetMovementModifier(GameModel.getMovement());
+        
         GameView.setTxtRolls(baseRoles, rollTotal);
 
         GameView.OnRollResultContinueEvent += handleMoveRollResult;
