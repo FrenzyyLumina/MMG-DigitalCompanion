@@ -47,6 +47,7 @@ public static class GameEnums
         Passive,
         TurnUsable,
         CqcUsable,
+        RollUsable
     }
 
     public enum SquareType
@@ -58,5 +59,10 @@ public static class GameEnums
         McGuffin,
         Spawn,
         Trap,
+    }
+    public enum Items
+    {
+        None,
+        Dice,
     }
 }
