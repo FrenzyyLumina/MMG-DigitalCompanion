@@ -403,6 +403,13 @@ public class QRScanner : MonoBehaviour
         _isScanning = false;
         _lastScanTime = Time.time;
         
+        // Restart the camera for the next player
+        if (_camTexture != null && !_camTexture.isPlaying)
+        {
+            _camTexture.Play();
+            Debug.Log("Camera restarted for next player");
+        }
+        
         if (GameManager.Instance != null)
         {
             int playerNum = GameManager.Instance.CurrentScanningPlayer + 1;
