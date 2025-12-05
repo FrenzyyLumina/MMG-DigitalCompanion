@@ -314,8 +314,8 @@ public class GameMain : MonoBehaviour
     {
         // Get player data from GameManager
         //DEBUG: Change this after testing
-        //int totalPlayers = 2; //Debug
-        int totalPlayers = GameManager.Instance.TotalPlayers;
+        int totalPlayers = 2; //Debug
+        //int totalPlayers = GameManager.Instance.TotalPlayers;
         Debug.Log($"GameMain: Using {totalPlayers} players from GameManager");
         GameModel.setTotalPlayers(totalPlayers);
 
