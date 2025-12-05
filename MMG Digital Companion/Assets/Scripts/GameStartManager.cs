@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using TMPro;
 
 public class GameStartManager : MonoBehaviour
@@ -14,6 +15,18 @@ public class GameStartManager : MonoBehaviour
     private int currentPlayerIndex = 0;
     private int totalPlayers;
     private bool hasDoubleAgent = false;
+
+    void Awake()
+    {
+        // Ensure EventSystem exists for UI input
+        if (FindObjectOfType<EventSystem>() == null)
+        {
+            GameObject eventSystem = new GameObject("EventSystem");
+            eventSystem.AddComponent<EventSystem>();
+            eventSystem.AddComponent<StandaloneInputModule>();
+            Debug.Log("EventSystem created automatically");
+        }
+    }
 
     void Start()
     {
@@ -66,9 +79,21 @@ public class GameStartManager : MonoBehaviour
 
     public void OnScanButtonPressed()
     {
+        Debug.Log($"!!! SCAN BUTTON PRESSED !!!");
+        
+        if (GameManager.Instance == null)
+        {
+            Debug.LogError("GameManager.Instance is NULL! Cannot proceed.");
+            return;
+        }
+        
         Debug.Log($"Scan button pressed for Player {currentPlayerIndex + 1}");
+        Debug.Log($"About to call StartQRScannerScene...");
+        
         // Transition to QR Scanner scene
         GameManager.Instance.StartQRScannerScene();
+        
+        Debug.Log("StartQRScannerScene called!");
     }
 
     void StartGame()

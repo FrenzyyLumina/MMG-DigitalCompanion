@@ -8,7 +8,6 @@ using UnityEngine.Android;
 
 public class QRScanner : MonoBehaviour
 {
-
     [SerializeField]
     private RawImage _rawImageBG;
     [SerializeField]
@@ -21,6 +20,8 @@ public class QRScanner : MonoBehaviour
     private bool _isCamAvailable;
     private WebCamTexture _camTexture;
     private bool _isScanning = false;
+    private float _scanInterval = 2.0f; // Scan every 2 seconds
+    private float _lastScanTime = 0f;
 
     void Start()
     {
@@ -70,10 +71,33 @@ public class QRScanner : MonoBehaviour
     void Update()
     {
         UpdateCameraRender();
+        
+        // Auto-scan continuously when camera is available
+        if (_isCamAvailable && !_isScanning && Time.time - _lastScanTime >= _scanInterval)
+        {
+            _lastScanTime = Time.time;
+            Scan();
+        }
     }
 
     private void SetUpCamera()
     {
+        // Check if UI elements are assigned
+        if (_textResult == null)
+        {
+            Debug.LogError("_textResult is not assigned in Inspector!");
+            _isCamAvailable = false;
+            return;
+        }
+        
+        if (_rawImageBG == null)
+        {
+            Debug.LogError("_rawImageBG is not assigned in Inspector!");
+            _textResult.text = "UI not configured!";
+            _isCamAvailable = false;
+            return;
+        }
+        
         WebCamDevice[] devices = WebCamTexture.devices;
 
         if(devices.Length == 0)
@@ -116,7 +140,8 @@ public class QRScanner : MonoBehaviour
         _camTexture.Play();
         _rawImageBG.texture = _camTexture;
         _isCamAvailable = true;
-        _textResult.text = "Camera ready - Press SCAN to scan QR code";
+        _textResult.text = "Point camera at QR code...";
+        _lastScanTime = Time.time;
         
         Debug.Log($"Camera started: {_camTexture.deviceName}, {_camTexture.width}x{_camTexture.height}");
     }
@@ -190,7 +215,7 @@ public class QRScanner : MonoBehaviour
             }
             else
             {
-                _textResult.text = "No QR code detected. Try again.";
+                // No QR code found, reset scanning flag to try again
                 _isScanning = false;
             }
         }
@@ -212,21 +237,33 @@ public class QRScanner : MonoBehaviour
         
         Debug.Log($"Processing QR content: {content}");
         
-        if (content.Contains("gent") && !content.Contains("agent"))
+        if (content.Contains("the_gent") || content.Contains("gent"))
         {
             scannedRole = GameEnums.Role.Gent;
         }
-        else if (content.Contains("soldier"))
+        else if (content.Contains("the_soldier") || content.Contains("soldier"))
         {
             scannedRole = GameEnums.Role.Soldier;
         }
-        else if (content.Contains("thief"))
+        else if (content.Contains("the_thief") || content.Contains("thief"))
         {
             scannedRole = GameEnums.Role.Thief;
         }
-        else if (content.Contains("double") || (content.Contains("agent") && !content.Contains("gent")))
+        else if (content.Contains("the_assassin") || content.Contains("assassin"))
+        {
+            scannedRole = GameEnums.Role.Assassin;
+        }
+        else if (content.Contains("the_hacker") || content.Contains("hacker"))
+        {
+            scannedRole = GameEnums.Role.Hacker;
+        }
+        else if (content.Contains("double_agent"))
         {
             scannedRole = GameEnums.Role.Double_Agent;
+        }
+        else if (content.Contains("the_vengeful") || content.Contains("vengeful"))
+        {
+            scannedRole = GameEnums.Role.Vengeful;
         }
         
         if (scannedRole == GameEnums.Role.Unknown)
