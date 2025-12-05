@@ -84,12 +84,12 @@ public class GameMain : MonoBehaviour
         Inventory inv = curPlayer.getInventory();
         for (int i = 0; i < extraDiceUsed; i++)
         {
-            inv.removeItemByName("Dice");
+            inv.removeItemByName(GameEnums.Items.Dice.ToString());
         }
 
         if (isLoudShort)
         {
-            Item newDice = new Item("Dice", GameEnums.ItemUseType.TurnUsable);
+            Item newDice = new Item(GameEnums.Items.Dice.ToString(), GameEnums.ItemUseType.TurnUsable);
             inv.addItem(newDice);
         }
 
@@ -192,6 +192,8 @@ public class GameMain : MonoBehaviour
             GameView.updateSwingPanel(GameModel.getPlayers());
             GameView.SetTurnCount(GameModel.getCurrentTurn());
             GameView.SetCurrentPlayer(GameModel.getCurrentPlrIdx() + 1);
+            GameView.setInventory(GameModel.getCurrentPlayerToAct().getInventory());
+
             yield return StartCoroutine(handleCurrentPlayer());
 
             if (GameModel.getCurrentPlrIdx() == totalPlayers - 1)
