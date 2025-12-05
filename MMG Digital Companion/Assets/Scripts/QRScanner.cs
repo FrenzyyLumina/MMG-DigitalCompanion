@@ -74,6 +74,22 @@ public class QRScanner : MonoBehaviour
 
     private void SetUpCamera()
     {
+        // Check if UI elements are assigned
+        if (_textResult == null)
+        {
+            Debug.LogError("_textResult is not assigned in Inspector!");
+            _isCamAvailable = false;
+            return;
+        }
+        
+        if (_rawImageBG == null)
+        {
+            Debug.LogError("_rawImageBG is not assigned in Inspector!");
+            _textResult.text = "UI not configured!";
+            _isCamAvailable = false;
+            return;
+        }
+        
         WebCamDevice[] devices = WebCamTexture.devices;
 
         if(devices.Length == 0)
