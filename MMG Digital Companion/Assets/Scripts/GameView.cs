@@ -59,6 +59,7 @@ public class GameView : MonoBehaviour
     public static event Action OnCqcResultContinueEvent;
     public static event Action OnTrapSpawnRerollEvent;
     public static event Action OnSnitchEvent;
+    public static event Action<GameEnums.Item> OnItemUsedEvent;
 
     public static List<Button> AddedButtons;
 
@@ -233,7 +234,7 @@ public class GameView : MonoBehaviour
 
             TMP_Text buttonTextComponent = newButton.GetComponentInChildren<TMP_Text>();
             buttonTextComponent.text = $"x{item.getCount()}";
-            //newButton.onClick.AddListener(() => On);
+            newButton.onClick.AddListener(() => OnItemUsedEvent?.Invoke(item.getItemType()));
             AddedButtons.Add(newButton);
         }
     }
