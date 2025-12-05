@@ -132,7 +132,7 @@ public class GameManager : MonoBehaviour
         IsItemScanningMode = false;
         ScannedItems.Clear();
         
-        // Return to Game scene
-        SceneManager.LoadScene("Game");
+        // Return to GameStart scene to continue item scanning loop
+        SceneManager.LoadScene("GameStart");
     }
 }

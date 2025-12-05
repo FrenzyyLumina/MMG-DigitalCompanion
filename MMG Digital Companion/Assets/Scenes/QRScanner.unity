@@ -155,7 +155,7 @@ MonoBehaviour:
   _aspectRatioFitter: {fileID: 378172441}
   _textResult: {fileID: 1963575450}
   _scanZone: {fileID: 1145870361}
-  _endScanButton: {fileID: 0}
+  _endScanButton: {fileID: 1711278404}
 --- !u!4 &234137837
 Transform:
   m_ObjectHideFlags: 0

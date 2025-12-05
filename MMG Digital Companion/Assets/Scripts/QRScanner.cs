@@ -87,10 +87,30 @@ public class QRScanner : MonoBehaviour
     private void SetUpCamera()
     {
         // Wire up End Scan button listener for item scanning mode
+        if (_endScanButton == null)
+        {
+            // Try to find it by searching the canvas for a button named "EndScanButton" or similar
+            Button[] buttons = FindObjectsOfType<Button>();
+            foreach (Button btn in buttons)
+            {
+                if (btn.name.ToLower().Contains("end") || btn.name.ToLower().Contains("scan"))
+                {
+                    _endScanButton = btn;
+                    Debug.Log($"End Scan button auto-found: {btn.name}");
+                    break;
+                }
+            }
+        }
+        
         if (_endScanButton != null)
         {
             _endScanButton.onClick.RemoveAllListeners();
             _endScanButton.onClick.AddListener(OnEndScanPressed);
+            Debug.Log("End Scan button listener registered");
+        }
+        else
+        {
+            Debug.LogWarning("End Scan button not found! Please assign it in the Inspector as '_endScanButton'");
         }
         
         if (_textResult == null)
@@ -277,7 +297,8 @@ public class QRScanner : MonoBehaviour
             if (scannedItem != GameEnums.Item.None)
             {
                 GameManager.Instance.AddScannedItem(scannedItem);
-                _textResult.text = $"Scanned: {scannedItem}\nTotal: {GameManager.Instance.ScannedItems.Count}";
+                int playerNum = GameManager.Instance.CurrentScanningPlayer + 1;
+                _textResult.text = $"Scanned: {scannedItem}\nTotal: {GameManager.Instance.ScannedItems.Count} (P{playerNum})";
                 _isScanning = false;
                 return;
             }
