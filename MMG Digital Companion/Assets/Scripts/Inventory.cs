@@ -81,7 +81,14 @@ public class Inventory
     {
         this.removeItemByName(item.getItemName());
     }
-    
+
+    public void decrementAll()
+    {
+        foreach(Item item in this.inventory)
+        {
+            removeItemByItemType(item.getItemType());
+        }
+    }
     public void removeAllItems()
     {
         this.inventory.Clear();
