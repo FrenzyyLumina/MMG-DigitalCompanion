@@ -6,8 +6,6 @@ using UnityEngine;
 
 public class GameMain : MonoBehaviour
 {
-    private bool isItemScanningInProgress = false;
-    
     //Helper Functions
     private void handleRerollTrapPrompt()
     {
@@ -18,36 +16,11 @@ public class GameMain : MonoBehaviour
 
     private void HandleItemScanningStart()
     {
-        if (!isItemScanningInProgress)
-        {
-            StartCoroutine(HandleItemScanningRound());
-        }
-    }
-
-    private IEnumerator HandleItemScanningRound()
-    {
-        isItemScanningInProgress = true;
-        
-        // Start item scanning for each player
-        int playerCount = GameManager.Instance != null ? GameManager.Instance.TotalPlayers : 2;
-        
-        for (int playerIdx = 0; playerIdx < playerCount; playerIdx++)
-        {
-            Debug.Log($"Starting item scanning for Player {playerIdx + 1}");
-            GameManager.Instance.StartItemScanningForPlayer(playerIdx);
-            
-            // Wait until we're back in GameStart scene (after player finishes scanning)
-            yield return new WaitUntil(() => UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "GameStart");
-            
-            Debug.Log($"Player {playerIdx + 1} finished item scanning");
-            
-            // Small delay before starting next player's scan
-            yield return new WaitForSeconds(0.5f);
-        }
-        
-        Debug.Log("All players completed item scanning round");
-        
-        isItemScanningInProgress = false;
+        Debug.Log("Trap continue pressed - starting item scanning");
+        GameManager.Instance.IsItemScanningMode = true;
+        GameManager.Instance.CurrentScanningPlayer = 0;
+        GameManager.Instance.ScannedItems = new List<GameEnums.Item>();
+        GameManager.Instance.StartItemScanningForPlayer(0);
     }
 
     private void handleTargetPostMove(int targetIdx)
