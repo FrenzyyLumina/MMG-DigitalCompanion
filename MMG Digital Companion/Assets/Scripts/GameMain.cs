@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -46,7 +47,13 @@ public class GameMain : MonoBehaviour
         //Auto damage if soft
         if (GameModel.getMovement() == GameEnums.Movement.Soft)
         {
-            GameModel.damagePlayer(targetIdx);
+            //Item: Personal Radar
+            Inventory inv = GameModel.getPlayerByIdx(targetIdx).getInventory();
+            if (inv.findItemByItemType(GameEnums.Item.Personal_Radar) == null)
+                GameModel.damagePlayer(targetIdx);
+            else
+                inv.removeItemByItemType(GameEnums.Item.Personal_Radar);
+
             GameView.OnTurnEnd();
             return;
         }
@@ -66,11 +73,22 @@ public class GameMain : MonoBehaviour
         void handle()
         {
             GameView.OnCqcResultContinueEvent -= handle;
+            int idxToDamage = -1;
 
             if (attackerTotal > attackeeTotal)
-                GameModel.damagePlayer(targetIdx);
+                idxToDamage = targetIdx;
             else if (attackerTotal < attackeeTotal)
-                GameModel.damagePlayer(GameModel.getCurrentPlrIdx());
+                idxToDamage = GameModel.getCurrentPlrIdx();
+
+            //Item: Body Armor
+            if (idxToDamage != -1)
+            {
+                Inventory inv = GameModel.getPlayerByIdx(idxToDamage).getInventory();
+                if (inv.findItemByItemType(GameEnums.Item.Body_Armor) == null)
+                    GameModel.damagePlayer(idxToDamage);
+                else
+                    inv.removeItemByItemType(GameEnums.Item.Body_Armor);
+            }
 
             GameView.OnTurnEnd();
         }
@@ -107,10 +125,24 @@ public class GameMain : MonoBehaviour
     }
     private void handleGeneralMove(int baseCount, bool isLoudShort)
     {
+        Player curPlayer = GameModel.getCurrentPlayerToAct();
+        Inventory itemUsedInv = curPlayer.getItemUsedInv();
         int extraDiceUsed = 0; //TODO: Get the value from somewhere
+        
+        if (
+            GameModel.getMovement() == GameEnums.Movement.Soft &&
+            (
+                itemUsedInv.findItemByItemType(GameEnums.Item.Sneaking_Suit) != null ||
+                itemUsedInv.findItemByItemType(GameEnums.Item.Cardboard_Box) != null
+            )
+        )
+        {
+            extraDiceUsed += 1;
+        }
+
         int dicesToUsed = baseCount + extraDiceUsed;
 
-        Player curPlayer = GameModel.getCurrentPlayerToAct();
+        
         Inventory inv = curPlayer.getInventory();
         for (int i = 0; i < extraDiceUsed; i++)
         {
@@ -142,9 +174,68 @@ public class GameMain : MonoBehaviour
         GameView.OnRollResultContinueEvent += handleMoveRollResult;
         GameView.showRollResult();
     }
-    private void handleOnCompleteObjective() => GameModel.getCurrentPlayerToAct().setActionState(GameEnums.ActionState.CompletingObjective);
+    private void handleOnCompleteObjective()
+    {
+        Inventory itemUsed = GameModel.getCurrentPlayerToAct().getItemUsedInv();
+        if (itemUsed.findItemByItemType(GameEnums.Item.The_Doohickey) != null)
+        {
+            GameModel.incObjective();
+            return;
+        }
+
+        GameModel.getCurrentPlayerToAct().setActionState(GameEnums.ActionState.CompletingObjective);
+    }
     private void handleOnSnitch() => GameModel.attemptSnitch(GameModel.getCurrentPlrIdx());
     
+    private void handleOnItemUsed(GameEnums.Item itemType)
+    {
+        Player curPlr = GameModel.getCurrentPlayerToAct();
+        Inventory inv = curPlr.getInventory();
+
+        switch (itemType)
+        {
+            //Defensive
+            case GameEnums.Item.Rations:
+                inv.removeItemByItemType(GameEnums.Item.Rations);
+                curPlr.setState(GameEnums.HealthState.Normal);
+                break;
+            case GameEnums.Item.Adrenaline:
+                //TODO: Check if there's more debuffs to consider
+                if (curPlr.getActionState() != GameEnums.ActionState.Stunned)
+                    break;
+                
+                inv.removeItemByItemType(GameEnums.Item.Adrenaline);
+                curPlr.setActionState(GameEnums.ActionState.Normal);
+                break;
+
+            //Utiliy
+            case GameEnums.Item.Universal_Multi_Tool:
+                inv.removeItemByItemType(GameEnums.Item.Universal_Multi_Tool);
+                break;
+            case GameEnums.Item.Sneaking_Suit:
+                inv.removeItemByItemType(GameEnums.Item.Sneaking_Suit);
+                Item newItem = new Item(GameEnums.Item.Sneaking_Suit, GameEnums.ItemUseType.TurnUsable);
+                newItem.incCount();
+                newItem.incCount();
+                curPlr.getItemUsedInv().addItem(newItem);
+                
+                break;
+            case GameEnums.Item.Cardboard_Box:
+                inv.removeItemByItemType(GameEnums.Item.Cardboard_Box);
+                curPlr.getItemUsedInv().addItem(new Item(GameEnums.Item.Cardboard_Box, GameEnums.ItemUseType.TurnUsable));
+                break;
+            case GameEnums.Item.Coin:
+                inv.removeItemByItemType(GameEnums.Item.Coin);
+                break;
+            case GameEnums.Item.The_Doohickey:
+                inv.removeItemByItemType(GameEnums.Item.The_Doohickey);
+                curPlr.getItemUsedInv().addItem(new Item(GameEnums.Item.The_Doohickey, GameEnums.ItemUseType.TurnUsable));
+                break;
+
+        }
+
+        GameView.setInventory(inv);
+    }
     //End of Helper Methods
     private IEnumerator handleCurrentPlayer()
     {
@@ -162,6 +253,11 @@ public class GameMain : MonoBehaviour
             GameView.setMainChoiceButtonsInteractable(false);
             GameView.DisplayMainChoice();
             yield return GameView.WaitForTurnEnd();
+            if (actionState == GameEnums.ActionState.CompletingObjective)
+            {
+                GameModel.incObjective();
+            }
+
             curPlayer.setActionState(GameEnums.ActionState.Normal);
             yield break;
         }
@@ -230,6 +326,7 @@ public class GameMain : MonoBehaviour
         GameView.OnTrapSpawnContinueEvent += HandleItemScanningStart;
         GameView.OnSnitchEvent += handleOnSnitch;
         GameView.OnCompleteObjectivePressedEvent += handleOnCompleteObjective;
+        GameView.OnItemUsedEvent += handleOnItemUsed;
 
         //Start of actual game loop
         while (!GameModel.checkForWinner())
@@ -247,6 +344,7 @@ public class GameMain : MonoBehaviour
                 handleRerollTrapPrompt();
             }
 
+            GameModel.getCurrentPlayerToAct().getItemUsedInv().decrementAll();
             GameModel.moveToNextPlayer();
         }
 
@@ -262,6 +360,7 @@ public class GameMain : MonoBehaviour
         GameView.OnTrapSpawnContinueEvent -= HandleItemScanningStart;
         GameView.OnSnitchEvent -= handleOnSnitch;
         GameView.OnCompleteObjectivePressedEvent -= handleOnCompleteObjective;
+        GameView.OnItemUsedEvent -= handleOnItemUsed;
     }
 
     private void Start()

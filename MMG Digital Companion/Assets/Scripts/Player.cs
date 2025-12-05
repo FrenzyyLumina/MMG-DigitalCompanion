@@ -9,6 +9,7 @@ public class Player
     private GameEnums.ActionState   action;
 
     private readonly Inventory inventory;
+    private readonly Inventory itemUsedInv;
     private List<float> modifiers; //Multiplicative
     private bool isRoleRevealed;
     private bool isInRoom;
@@ -21,6 +22,7 @@ public class Player
         this.action = GameEnums.ActionState.Normal;
         
         this.inventory = new Inventory();
+        this.itemUsedInv = new Inventory();
         this.modifiers = new List<float>();
         this.isRoleRevealed = false;
     }
@@ -40,6 +42,10 @@ public class Player
     public Inventory getInventory()
     {
         return this.inventory;
+    }
+    public Inventory getItemUsedInv()
+    {
+        return this.itemUsedInv;
     }
     public float getModifier()
     {

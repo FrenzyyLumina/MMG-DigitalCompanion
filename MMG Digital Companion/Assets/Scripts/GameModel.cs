@@ -249,6 +249,16 @@ public class GameModel : MonoBehaviour
 
             case GameEnums.HealthState.Wounded:
                 targetPlr.setState(GameEnums.HealthState.Dead);
+
+                //Item: Revival Pill
+                Inventory inv = targetPlr.getInventory();
+                if (inv.findItemByItemType(GameEnums.Item.Revival_Pill) == null)
+                    break;
+
+                inv.removeItemByItemType(GameEnums.Item.Revival_Pill);
+                targetPlr.setState(GameEnums.HealthState.Normal);
+                targetPlr.setActionState(GameEnums.ActionState.Normal);
+
                 break;
             default:
                 print($"Invalid Case: targetted a player with state: {curState}");
