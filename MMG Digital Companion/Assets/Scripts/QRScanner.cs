@@ -8,7 +8,6 @@ using UnityEngine.Android;
 
 public class QRScanner : MonoBehaviour
 {
-
     [SerializeField]
     private RawImage _rawImageBG;
     [SerializeField]
@@ -67,6 +66,8 @@ public class QRScanner : MonoBehaviour
             _isCamAvailable = false;
             Debug.LogError("Camera permission was not granted!");
         }
+    }
+
     void Update()
     {
         UpdateCameraRender();
@@ -77,8 +78,6 @@ public class QRScanner : MonoBehaviour
             _lastScanTime = Time.time;
             Scan();
         }
-    }
-        UpdateCameraRender();
     }
 
     private void SetUpCamera()
@@ -131,18 +130,18 @@ public class QRScanner : MonoBehaviour
         }
         
         if(_camTexture == null)
+        {
+            _isCamAvailable = false;
+            _textResult.text = "Failed to initialize camera!";
+            Debug.LogError("Failed to create WebCamTexture!");
+            return;
+        }
+        
         _camTexture.Play();
         _rawImageBG.texture = _camTexture;
         _isCamAvailable = true;
         _textResult.text = "Point camera at QR code...";
         _lastScanTime = Time.time;
-        
-        Debug.Log($"Camera started: {_camTexture.deviceName}, {_camTexture.width}x{_camTexture.height}");
-        
-        _camTexture.Play();
-        _rawImageBG.texture = _camTexture;
-        _isCamAvailable = true;
-        _textResult.text = "Camera ready - Press SCAN to scan QR code";
         
         Debug.Log($"Camera started: {_camTexture.deviceName}, {_camTexture.width}x{_camTexture.height}");
     }
@@ -213,11 +212,11 @@ public class QRScanner : MonoBehaviour
                 _textResult.text = $"Scanned: {result.Text}";
                 Debug.Log($"QR Code detected: {result.Text}");
                 ProcessQRCode(result.Text);
+            }
             else
             {
                 // No QR code found, reset scanning flag to try again
                 _isScanning = false;
-            }   _isScanning = false;
             }
         }
         catch (System.Exception e)
