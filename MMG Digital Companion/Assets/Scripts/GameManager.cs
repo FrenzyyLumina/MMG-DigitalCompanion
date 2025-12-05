@@ -59,6 +59,7 @@ public class GameManager : MonoBehaviour
 
     public void StartGameStartScene()
     {
+        Debug.Log("StartGameStartScene called - Loading GameStart scene...");
         CurrentScanningPlayer = 0;
         SceneManager.LoadScene("GameStart");
     }

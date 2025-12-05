@@ -36,7 +36,25 @@ public class UIManager : MonoBehaviour
 
     public void OnGameStarted()
     {
-        SceneManager.LoadScene(GAME_SCENE);
+        Debug.Log("OnGameStarted called - transitioning to GameStart scene");
+        
+        // Use GameManager if available to maintain player count
+        if (GameManager.Instance != null)
+        {
+            // If player count is 0, set default to 2
+            if (GameManager.Instance.TotalPlayers == 0)
+            {
+                Debug.Log("Player count was 0, setting to 2");
+                GameManager.Instance.SetPlayerCount(2);
+            }
+            
+            GameManager.Instance.StartGameStartScene();
+        }
+        else
+        {
+            // Fallback if GameManager doesn't exist
+            SceneManager.LoadScene(GAME_START_SCENE);
+        }
     }
 
     public void OnGameEnded()

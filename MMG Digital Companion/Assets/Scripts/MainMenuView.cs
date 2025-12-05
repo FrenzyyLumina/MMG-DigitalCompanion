@@ -104,14 +104,21 @@ public class MainMenuView : MonoBehaviour
 
     public void OnStartPressed()
     {
+        Debug.Log("Start button pressed!");
+        
         // Check if player count has been set, if not default to 2
         if (GameManager.Instance != null)
         {
+            Debug.Log($"GameManager found. Current player count: {GameManager.Instance.TotalPlayers}");
+            
             // If player count is 0, set default to 2
             if (GameManager.Instance.TotalPlayers == 0)
             {
+                Debug.Log("Player count was 0, setting to 2");
                 GameManager.Instance.SetPlayerCount(2);
             }
+            
+            Debug.Log("Calling StartGameStartScene...");
             GameManager.Instance.StartGameStartScene();
         }
         else
