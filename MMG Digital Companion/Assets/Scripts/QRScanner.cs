@@ -22,11 +22,17 @@ public class QRScanner : MonoBehaviour
     private bool _isScanning = false;
     private float _scanInterval = 2.0f; // Scan every 2 seconds
     private float _lastScanTime = 0f;
+    private ScreenOrientation _previousOrientation;
 
     void Start()
     {
-        RequestCameraPermission();
+        // Save the previous orientation to restore it later
+        _previousOrientation = Screen.orientation;
+        
+        // Set to portrait for QR scanning
         Screen.orientation = ScreenOrientation.Portrait;
+        
+        RequestCameraPermission();
     }
     
     void RequestCameraPermission()
@@ -298,6 +304,9 @@ public class QRScanner : MonoBehaviour
     
     void OnDestroy()
     {
+        // Restore the original screen orientation when leaving the scene
+        Screen.orientation = _previousOrientation;
+        
         // Clean up camera when leaving scene
         if (_camTexture != null && _camTexture.isPlaying)
         {
